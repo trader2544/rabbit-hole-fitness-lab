@@ -203,9 +203,9 @@ const Nutrition = () => {
                   </p>
                   
                   <ul className="list-disc pl-6 mb-4">
-                    <li className="mb-1"><strong>Hydration:</strong> 7-10ml/kg/hour, with electrolytes for sessions >60 minutes</li>
-                    <li className="mb-1"><strong>Carbohydrates:</strong> 30-60g/hour for sessions >90 minutes (from easily digestible sources)</li>
-                    <li className="mb-1"><strong>Protein:</strong> Generally unnecessary except for ultra-endurance events (>3 hours)</li>
+                    <li className="mb-1"><strong>Hydration:</strong> 7-10ml/kg/hour, with electrolytes for sessions {'>'}60 minutes</li>
+                    <li className="mb-1"><strong>Carbohydrates:</strong> 30-60g/hour for sessions {'>'}90 minutes (from easily digestible sources)</li>
+                    <li className="mb-1"><strong>Protein:</strong> Generally unnecessary except for ultra-endurance events ({'>'}3 hours)</li>
                   </ul>
                   
                   <h3 className="text-xl font-medium mt-6 mb-3">Post-Workout Nutrition</h3>

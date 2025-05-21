@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Calculator, Chat } from "lucide-react";
+import { Calculator, MessageSquare } from "lucide-react";
 
 const ToolsPreview = () => {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const ToolsPreview = () => {
           {/* Exercise Chat Preview */}
           <div className="bg-card border border-border rounded-xl p-8 flex flex-col items-center text-center shadow-sm opacity-0 animate-fade-in animate-delay-300">
             <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
-              <Chat className="h-8 w-8 text-primary" />
+              <MessageSquare className="h-8 w-8 text-primary" />
             </div>
             <h3 className="text-2xl font-semibold mb-3">Exercise Recommendation Chat</h3>
             <p className="text-foreground/70 mb-6">

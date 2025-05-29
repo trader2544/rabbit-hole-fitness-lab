@@ -1,62 +1,61 @@
 
-import { Heart, Dumbbell, Book, Calculator } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Heart, Dumbbell, Book, Calculator, Crown, Users } from "lucide-react";
 
 const features = [
   {
-    title: "Deep Biology",
-    description:
-      "Understand the science behind muscle growth, metabolism, hormonal responses, and recovery at the cellular level.",
+    title: "Deep Science",
+    description: "Evidence-based training methods rooted in exercise physiology and biomechanics",
     icon: Heart,
-    delay: "animate-delay-100",
   },
   {
-    title: "Fitness Modalities",
-    description:
-      "Explore calisthenics, sport-specific training, aesthetic weightlifting, functional fitness, and more.",
-    icon: Dumbbell,
-    delay: "animate-delay-200",
+    title: "Expert Trainers",
+    description: "Certified professionals with proven track records and specialized expertise",
+    icon: Users,
   },
   {
-    title: "Holistic Nutrition",
-    description:
-      "Learn about macronutrients, micronutrients, gut health, meal timing, and evidence-based dietary approaches.",
+    title: "Premium Content",
+    description: "Curated educational resources covering nutrition, recovery, and performance",
     icon: Book,
-    delay: "animate-delay-300",
   },
   {
-    title: "Interactive Tools",
-    description:
-      "Calculate your BMI, estimate caloric needs, and get personalized exercise recommendations through our chat feature.",
+    title: "Smart Tools",
+    description: "Advanced calculators and AI-powered recommendations for optimal results",
     icon: Calculator,
-    delay: "animate-delay-400",
+  },
+  {
+    title: "Elite Programs",
+    description: "Exclusive coaching programs designed for serious fitness enthusiasts",
+    icon: Crown,
+  },
+  {
+    title: "Proven Methods",
+    description: "Time-tested approaches combining traditional and cutting-edge techniques",
+    icon: Dumbbell,
   },
 ];
 
 const FeaturesGrid = () => {
   return (
-    <section id="content" className="py-16 bg-background">
+    <section className="py-24 bg-white">
       <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-3xl font-bold mb-4 opacity-0 animate-fade-in animate-delay-100">
-            Go Down the Rabbit Hole
+        <div className="text-center max-w-3xl mx-auto mb-20">
+          <h2 className="text-4xl font-light text-gray-900 mb-6">
+            Why Choose Excellence
           </h2>
-          <p className="text-lg text-foreground/80 opacity-0 animate-fade-in animate-delay-200">
-            Discover the "why" behind fitness and nutrition with our comprehensive resources
+          <p className="text-lg text-gray-600 leading-relaxed">
+            We combine scientific rigor with practical application to deliver transformative results
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 max-w-6xl mx-auto">
           {features.map((feature, index) => (
-            <Card key={index} className={`border border-border bg-card shadow-sm opacity-0 animate-fade-in ${feature.delay}`}>
-              <CardContent className="p-6">
-                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <feature.icon className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-foreground/70">{feature.description}</p>
-              </CardContent>
-            </Card>
+            <div key={index} className="text-center group">
+              <div className="w-16 h-16 mx-auto mb-6 flex items-center justify-center border border-gray-200 group-hover:border-black transition-colors duration-300">
+                <feature.icon className="h-7 w-7 text-gray-600 group-hover:text-black transition-colors duration-300" />
+              </div>
+              <h3 className="text-xl font-semibold mb-4 text-gray-900">{feature.title}</h3>
+              <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+            </div>
           ))}
         </div>
       </div>

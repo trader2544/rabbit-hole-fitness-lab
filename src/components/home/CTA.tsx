@@ -1,35 +1,45 @@
 
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 const CTA = () => {
   const navigate = useNavigate();
   
   return (
-    <section className="py-16 bg-gradient-to-r from-fitness-600 to-fitness-400">
+    <section className="py-24 bg-black">
       <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto text-center text-white">
-          <h2 className="text-3xl font-bold mb-4">Ready to Start Your Fitness Journey?</h2>
-          <p className="text-lg mb-8 opacity-90">
-            Access our free resources or try our interactive tools to take the first step toward evidence-based fitness and nutrition.
+        <div className="max-w-4xl mx-auto text-center text-white">
+          <h2 className="text-4xl lg:text-5xl font-light mb-6">
+            Begin Your Transformation
+          </h2>
+          <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
+            Join our exclusive community of high-performers who demand excellence in every aspect of their fitness journey.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Button 
-              variant="default" 
               size="lg"
-              className="bg-white text-fitness-600 hover:bg-white/90 font-medium"
-              onClick={() => navigate("/resources")}
+              className="bg-white text-black hover:bg-gray-100 rounded-none px-8 py-6 text-lg font-normal"
+              onClick={() => navigate("/trainers")}
             >
-              Explore Free Resources
+              Start Premium Training
+              <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button 
               variant="outline" 
               size="lg"
-              className="border-white text-white hover:bg-white/10 font-medium"
-              onClick={() => navigate("/tools")}
+              className="border-2 border-white text-white hover:bg-white hover:text-black rounded-none px-8 py-6 text-lg font-normal"
+              onClick={() => navigate("/resources")}
             >
-              Try Our Tools
+              Explore Resources
             </Button>
+          </div>
+
+          <div className="mt-16 pt-8 border-t border-gray-800">
+            <p className="text-gray-400 text-sm">
+              Trusted by 500+ clients • 4.9/5 average rating • Premium support included
+            </p>
           </div>
         </div>
       </div>

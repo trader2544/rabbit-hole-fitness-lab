@@ -12,43 +12,46 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "Biology", path: "/biology" },
-    { name: "Fitness", path: "/fitness" },
-    { name: "Nutrition", path: "/nutrition" },
+    { name: "Services", path: "/trainers" },
+    { name: "Education", path: "/biology" },
     { name: "Tools", path: "/tools" },
     { name: "Resources", path: "/resources" }
   ];
 
   return (
-    <nav className="bg-background border-b border-border sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <NavLink to="/" className="flex items-center gap-2">
-          <span className="font-montserrat font-bold text-2xl bg-gradient-to-r from-fitness-600 to-fitness-400 text-transparent bg-clip-text">
-            Rabbit Hole Fitness Lab
+    <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        <NavLink to="/" className="flex items-center">
+          <span className="font-light text-2xl text-gray-900">
+            Rabbit Hole <span className="font-semibold">Fitness</span>
           </span>
         </NavLink>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-1">
+        <div className="hidden md:flex items-center space-x-8">
           {navLinks.map((link) => (
             <NavLink
               key={link.name}
               to={link.path}
               className={({ isActive }) =>
-                `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                `text-sm font-normal transition-colors ${
                   isActive
-                    ? "text-primary font-semibold"
-                    : "text-foreground/80 hover:text-primary"
+                    ? "text-black font-medium"
+                    : "text-gray-600 hover:text-black"
                 }`
               }
             >
               {link.name}
             </NavLink>
           ))}
-          <Button variant="default" size="sm" className="ml-3">
-            Sign In
-          </Button>
+          <div className="flex items-center space-x-4 ml-6 pl-6 border-l border-gray-200">
+            <Button variant="ghost" size="sm" className="text-gray-600 hover:text-black font-normal">
+              Sign In
+            </Button>
+            <Button size="sm" className="bg-black text-white hover:bg-gray-800 rounded-none px-6">
+              Get Started
+            </Button>
+          </div>
         </div>
 
         {/* Mobile menu button */}
@@ -61,17 +64,17 @@ const Navbar = () => {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden bg-background border-b border-border">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <div className="md:hidden bg-white border-t border-gray-100">
+          <div className="px-4 py-6 space-y-4">
             {navLinks.map((link) => (
               <NavLink
                 key={link.name}
                 to={link.path}
                 className={({ isActive }) =>
-                  `block px-3 py-2 rounded-md text-base font-medium ${
+                  `block text-base font-normal ${
                     isActive
-                      ? "text-primary font-semibold"
-                      : "text-foreground/80 hover:text-primary"
+                      ? "text-black font-medium"
+                      : "text-gray-600"
                   }`
                 }
                 onClick={() => setIsMenuOpen(false)}
@@ -79,9 +82,12 @@ const Navbar = () => {
                 {link.name}
               </NavLink>
             ))}
-            <div className="pt-2">
-              <Button variant="default" className="w-full">
+            <div className="pt-4 space-y-3">
+              <Button variant="ghost" className="w-full justify-start text-gray-600 font-normal">
                 Sign In
+              </Button>
+              <Button className="w-full bg-black text-white hover:bg-gray-800 rounded-none">
+                Get Started
               </Button>
             </div>
           </div>

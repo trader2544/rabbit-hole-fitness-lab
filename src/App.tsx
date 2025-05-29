@@ -10,6 +10,7 @@ import Biology from "./pages/Biology";
 import Fitness from "./pages/Fitness";
 import Nutrition from "./pages/Nutrition";
 import Tools from "./pages/Tools";
+import Trainers from "./pages/Trainers";
 import Resources from "./pages/Resources";
 import NotFound from "./pages/NotFound";
 
@@ -30,6 +31,8 @@ const App = () => (
             <Route path="/tools" element={<Tools />} />
             <Route path="/tools/calculators" element={<Tools />} />
             <Route path="/tools/chat" element={<Tools />} />
+            <Route path="/trainers" element={<Trainers />} />
+            <Route path="/trainers/book/:id" element={<Trainers />} />
             <Route path="/resources" element={<Resources />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

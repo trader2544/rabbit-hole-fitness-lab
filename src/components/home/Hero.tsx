@@ -17,26 +17,30 @@ const Hero = () => {
     {
       title: "Elite Personal Training",
       description: "1-on-1 sessions with certified professionals",
-      price: "From $25/hour",
-      features: ["Online & In-person", "Custom Programs", "Progress Tracking"]
+      price: "From $15/hour",
+      features: ["Online & In-person", "Custom Programs", "Progress Tracking"],
+      link: "/trainers"
     },
     {
       title: "Premium Coaching",
       description: "Comprehensive lifestyle transformation",
-      price: "From $149/month",
-      features: ["Nutrition Plans", "Recovery Protocols", "24/7 Support"]
+      price: "From $99/month",
+      features: ["Nutrition Plans", "Recovery Protocols", "24/7 Support"],
+      link: "/resources#premium"
     },
     {
       title: "Master Classes",
       description: "Advanced technique & specialty training",
-      price: "From $49/class",
-      features: ["Expert Instruction", "Small Groups", "Certificates"]
+      price: "From $29/class",
+      features: ["Expert Instruction", "Small Groups", "Certificates"],
+      link: "/resources#premium"
     },
     {
       title: "AI Coach Pro",
       description: "Instant guidance & recommendations",
       price: "$19/month",
-      features: ["Real-time Feedback", "Smart Analytics", "Unlimited Access"]
+      features: ["Real-time Feedback", "Smart Analytics", "Unlimited Access"],
+      link: "/tools"
     }
   ];
 
@@ -107,7 +111,11 @@ const Hero = () => {
               
               <div className="space-y-4 lg:space-y-6">
                 {services.map((service, index) => (
-                  <div key={index} className="bg-white p-4 lg:p-6 border-l-4 border-black">
+                  <div 
+                    key={index} 
+                    className="bg-white p-4 lg:p-6 border-l-4 border-black cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => navigate(service.link)}
+                  >
                     <div className="flex justify-between items-start mb-2">
                       <h4 className="font-semibold text-gray-900 text-sm lg:text-base">{service.title}</h4>
                       <span className="text-xs lg:text-sm text-gray-500 font-medium">{service.price}</span>

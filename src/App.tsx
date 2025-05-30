@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Biology from "./pages/Biology";
 import Fitness from "./pages/Fitness";
 import Nutrition from "./pages/Nutrition";
+import Education from "./pages/Education";
 import Tools from "./pages/Tools";
 import Trainers from "./pages/Trainers";
 import Resources from "./pages/Resources";
@@ -25,6 +26,7 @@ const App = () => (
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Index />} />
+            <Route path="/education" element={<Education />} />
             <Route path="/biology" element={<Biology />} />
             <Route path="/fitness" element={<Fitness />} />
             <Route path="/nutrition" element={<Nutrition />} />

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,7 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "Services", path: "/trainers", icon: Users },
-    { name: "Education", path: "/biology", icon: BookOpen },
+    { name: "Education", path: "/education", icon: BookOpen },
     { name: "Tools", path: "/tools", icon: Calculator },
     { name: "Resources", path: "/resources", icon: Crown }
   ];

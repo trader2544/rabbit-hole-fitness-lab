@@ -48,7 +48,7 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-gray-900 mb-6">Education</h4>
             <ul className="space-y-3">
-              <li><NavLink to="/biology" className="text-gray-600 hover:text-gray-900 transition-colors">Exercise Science</NavLink></li>
+              <li><NavLink to="/education" className="text-gray-600 hover:text-gray-900 transition-colors">Exercise Science</NavLink></li>
               <li><NavLink to="/fitness" className="text-gray-600 hover:text-gray-900 transition-colors">Training Methods</NavLink></li>
               <li><NavLink to="/nutrition" className="text-gray-600 hover:text-gray-900 transition-colors">Nutrition Science</NavLink></li>
               <li><NavLink to="/resources" className="text-gray-600 hover:text-gray-900 transition-colors">Free Resources</NavLink></li>

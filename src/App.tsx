@@ -10,6 +10,9 @@ import Biology from "./pages/Biology";
 import Fitness from "./pages/Fitness";
 import Nutrition from "./pages/Nutrition";
 import Education from "./pages/Education";
+import MensWeightlifting from "./pages/MensWeightlifting";
+import WomensTraining from "./pages/WomensTraining";
+import SteroidEducation from "./pages/SteroidEducation";
 import Tools from "./pages/Tools";
 import Trainers from "./pages/Trainers";
 import Resources from "./pages/Resources";
@@ -27,6 +30,9 @@ const App = () => (
           <Route element={<Layout />}>
             <Route path="/" element={<Index />} />
             <Route path="/education" element={<Education />} />
+            <Route path="/education/mens-weightlifting" element={<MensWeightlifting />} />
+            <Route path="/education/womens-training" element={<WomensTraining />} />
+            <Route path="/education/steroid-education" element={<SteroidEducation />} />
             <Route path="/biology" element={<Biology />} />
             <Route path="/fitness" element={<Fitness />} />
             <Route path="/nutrition" element={<Nutrition />} />

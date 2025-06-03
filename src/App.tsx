@@ -16,6 +16,7 @@ import SteroidEducation from "./pages/SteroidEducation";
 import Tools from "./pages/Tools";
 import Trainers from "./pages/Trainers";
 import Resources from "./pages/Resources";
+import Shop from "./pages/Shop";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/trainers" element={<Trainers />} />
             <Route path="/trainers/book/:id" element={<Trainers />} />
             <Route path="/resources" element={<Resources />} />
+            <Route path="/shop" element={<Shop />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Route>

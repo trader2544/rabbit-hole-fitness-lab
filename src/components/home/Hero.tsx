@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Star, Users, Clock, Award, Play, CheckCircle } from "lucide-react";
+import { ArrowRight, Star, Users, Clock, Award, Play, CheckCircle, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
@@ -17,30 +17,30 @@ const Hero = () => {
     {
       title: "Elite Personal Training",
       description: "1-on-1 sessions with certified professionals",
-      price: "From $15/hour",
+      price: "From $75/hour",
       features: ["Online & In-person", "Custom Programs", "Progress Tracking"],
       link: "/trainers"
     },
     {
       title: "Premium Coaching",
       description: "Comprehensive lifestyle transformation",
-      price: "From $99/month",
+      price: "From $79/month",
       features: ["Nutrition Plans", "Recovery Protocols", "24/7 Support"],
-      link: "/resources#premium"
+      link: "/resources"
     },
     {
       title: "Master Classes",
       description: "Advanced technique & specialty training",
-      price: "From $29/class",
-      features: ["Expert Instruction", "Small Groups", "Certificates"],
-      link: "/resources#premium"
+      price: "From $29/month",
+      features: ["Expert Instruction", "Video Library", "Certificates"],
+      link: "/resources"
     },
     {
-      title: "AI Coach Pro",
-      description: "Instant guidance & recommendations",
-      price: "$19/month",
-      features: ["Real-time Feedback", "Smart Analytics", "Unlimited Access"],
-      link: "/tools"
+      title: "Premium Equipment",
+      description: "Curated fitness gear & supplements",
+      price: "From $29.99",
+      features: ["Expert Tested", "Free Shipping", "Quality Guarantee"],
+      link: "/shop"
     }
   ];
 
@@ -81,11 +81,11 @@ const Hero = () => {
                 <Button 
                   variant="outline" 
                   size="lg" 
-                  onClick={() => navigate("/tools")}
+                  onClick={() => navigate("/shop")}
                   className="border-2 border-gray-200 text-gray-700 hover:bg-gray-50 rounded-none px-8 py-6 text-lg font-normal"
                 >
-                  <Play className="mr-2 h-5 w-5" />
-                  Try AI Coach
+                  <ShoppingBag className="mr-2 h-5 w-5" />
+                  Shop Equipment
                 </Button>
               </div>
 

@@ -1,121 +1,173 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Star, Clock, DollarSign, Search, Filter } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import TrainerCard from "@/components/trainers/TrainerCard";
+import { Star, MapPin, Clock, DollarSign, Users, Award, Calendar, MessageSquare, ArrowRight } from "lucide-react";
 
-const allTrainers = [
+const trainers = [
   {
-    id: "1",
-    name: "Patrick Kamande",
-    location: "Nairobi",
-    specialties: ["Calisthenics", "Strength Training", "Weight Loss"],
-    achievements: [
-      "Certified Personal Trainer (NASM)",
-      "5+ years transforming 200+ clients",
-      "Calisthenics competition winner 2023",
-      "Featured in Fitness Kenya Magazine"
-    ],
-    experience: "5+ years",
+    id: 1,
+    name: "Marcus Thompson",
+    specialty: "Strength & Conditioning",
+    location: "New York, NY",
     rating: 4.9,
-    onlineRate: 15,
-    physicalRate: 25,
-    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80",
-    bio: "Specializing in bodyweight training and functional fitness. Helping clients build strength and confidence through progressive calisthenics.",
-    availability: "Mon-Fri: 6AM-8PM, Sat: 8AM-4PM"
+    reviews: 127,
+    hourlyRate: 85,
+    experience: "8 years",
+    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    description: "Former collegiate athlete specializing in Olympic lifts and athletic performance.",
+    certifications: ["CSCS", "USAW", "FMS"],
+    availability: "Mon-Fri 6AM-8PM"
   },
   {
-    id: "2",
-    name: "Dennis Kabiru",
-    location: "Kiambu",
-    specialties: ["Powerlifting", "Muscle Building", "Sports Performance"],
-    achievements: [
-      "National Powerlifting Champion",
-      "Certified Strength & Conditioning Coach",
-      "Trained 50+ athletes to competition level",
-      "Olympic lifting certified"
-    ],
-    experience: "7+ years",
+    id: 2,
+    name: "Sarah Chen",
+    specialty: "Calisthenics & Flexibility",
+    location: "Los Angeles, CA",
     rating: 4.8,
-    onlineRate: 20,
-    physicalRate: 30,
-    image: "https://images.unsplash.com/photo-1594381898411-846e7d193883?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80",
-    bio: "Expert in strength development and muscle building. Proven track record in preparing athletes for competitions and helping clients achieve their physique goals.",
-    availability: "Tue-Sat: 5AM-7PM, Sun: 9AM-2PM"
+    reviews: 89,
+    hourlyRate: 75,
+    experience: "6 years",
+    image: "https://images.unsplash.com/photo-1594737625785-a6cbdabd333c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    description: "Yoga instructor turned calisthenics coach with expertise in bodyweight progressions.",
+    certifications: ["RYT-500", "PCC", "MovNat"],
+    availability: "Tue-Sat 7AM-6PM"
   },
   {
-    id: "3",
-    name: "Mohamed Hassan",
-    location: "Mombasa",
-    specialties: ["Functional Fitness", "HIIT", "Beach Body Training"],
-    achievements: [
-      "Certified CrossFit Level 2 Trainer",
-      "Marine Corps fitness background",
-      "300+ successful transformations",
-      "Functional movement specialist"
-    ],
-    experience: "6+ years",
+    id: 3,
+    name: "David Rodriguez",
+    specialty: "Nutrition & Body Composition",
+    location: "Austin, TX",
     rating: 4.9,
-    onlineRate: 18,
-    physicalRate: 28,
-    image: "https://images.unsplash.com/photo-1566753323558-f4e0952af115?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80",
-    bio: "Coastal fitness expert specializing in high-intensity functional training. Perfect for those looking to build endurance and achieve a beach-ready physique.",
-    availability: "Mon-Sat: 5:30AM-7:30PM, Sun: 8AM-3PM"
+    reviews: 156,
+    hourlyRate: 95,
+    experience: "10 years",
+    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    description: "Registered dietitian and certified trainer specializing in physique transformation.",
+    certifications: ["RD", "NASM-CPT", "PN1"],
+    availability: "Mon-Sun 5AM-9PM"
   },
   {
-    id: "4",
-    name: "Daniel Sugoi",
-    location: "Kisumu",
-    specialties: ["Running Performance", "Endurance Training", "Marathon Prep"],
-    achievements: [
-      "Former professional marathon runner",
-      "Sub 2:20 marathon personal best",
-      "Coached 15+ athletes to Boston qualifying times",
-      "Certified Running Coach (USATF)"
-    ],
-    experience: "8+ years",
+    id: 4,
+    name: "Emma Wilson",
+    specialty: "Rehabilitation & Mobility",
+    location: "Seattle, WA",
     rating: 4.7,
-    onlineRate: 16,
-    physicalRate: 24,
-    image: "https://images.unsplash.com/photo-1605296867304-46d5465a13f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80",
-    bio: "Elite running coach with professional racing background. Specializes in helping runners of all levels improve their performance and achieve personal bests.",
-    availability: "Daily: 5AM-7AM, 4PM-7PM (flexible for runners)"
+    reviews: 73,
+    hourlyRate: 90,
+    experience: "7 years",
+    image: "https://images.unsplash.com/photo-1594737625785-a6cbdabd333c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    description: "Physical therapist and movement specialist focusing on injury prevention.",
+    certifications: ["DPT", "SFMA", "Graston"],
+    availability: "Mon-Fri 8AM-5PM"
   }
 ];
 
 const Trainers = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState("all");
-  const [selectedSpecialty, setSelectedSpecialty] = useState("all");
+  const [selectedTrainer, setSelectedTrainer] = useState(null);
 
-  const handleBookOnline = (trainerId: string) => {
-    navigate(`/trainers/book/${trainerId}?type=online`);
-  };
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if (id) {
+      const trainer = trainers.find(t => t.id === parseInt(id));
+      setSelectedTrainer(trainer);
+    }
+  }, [id]);
 
-  const handleBookPhysical = (trainerId: string) => {
-    navigate(`/trainers/book/${trainerId}?type=physical`);
-  };
-
-  const filteredTrainers = allTrainers.filter(trainer => {
-    const matchesSearch = trainer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         trainer.specialties.some(specialty => 
-                           specialty.toLowerCase().includes(searchTerm.toLowerCase())
-                         );
-    const matchesLocation = selectedLocation === "all" || trainer.location === selectedLocation;
-    const matchesSpecialty = selectedSpecialty === "all" || 
-                            trainer.specialties.some(specialty => specialty === selectedSpecialty);
-    
-    return matchesSearch && matchesLocation && matchesSpecialty;
-  });
-
-  const locations = ["all", ...new Set(allTrainers.map(trainer => trainer.location))];
-  const specialties = ["all", ...new Set(allTrainers.flatMap(trainer => trainer.specialties))];
+  if (selectedTrainer) {
+    return (
+      <div className="min-h-screen bg-white">
+        {/* Trainer Detail View */}
+        <section className="py-16 md:py-24">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <Button 
+                variant="outline" 
+                onClick={() => navigate("/trainers")}
+                className="mb-8 border-gray-200 text-gray-700 hover:bg-gray-50 rounded-none"
+              >
+                ← Back to Trainers
+              </Button>
+              
+              <div className="grid lg:grid-cols-2 gap-12">
+                <div>
+                  <img 
+                    src={selectedTrainer.image} 
+                    alt={selectedTrainer.name}
+                    className="w-full aspect-[4/3] object-cover mb-6"
+                  />
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center">
+                        <Star className="h-4 w-4 text-yellow-500 fill-current mr-1" />
+                        <span className="font-semibold">{selectedTrainer.rating}</span>
+                        <span className="text-gray-500 ml-1">({selectedTrainer.reviews} reviews)</span>
+                      </div>
+                      <Badge variant="outline" className="rounded-none">{selectedTrainer.experience}</Badge>
+                    </div>
+                    
+                    <div className="flex items-center text-gray-600">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      {selectedTrainer.location}
+                    </div>
+                    
+                    <div className="flex items-center text-gray-600">
+                      <Clock className="h-4 w-4 mr-2" />
+                      {selectedTrainer.availability}
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h1 className="text-3xl font-light mb-2">{selectedTrainer.name}</h1>
+                  <p className="text-xl text-gray-600 mb-6">{selectedTrainer.specialty}</p>
+                  
+                  <div className="bg-gray-50 p-6 mb-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-2xl font-semibold">${selectedTrainer.hourlyRate}/hour</span>
+                      <span className="text-sm text-gray-500">Starting rate</span>
+                    </div>
+                    
+                    <div className="space-y-3 mb-6">
+                      <Button className="w-full bg-black text-white hover:bg-gray-800 rounded-none py-3">
+                        <Calendar className="mr-2 h-4 w-4" />
+                        Book Session
+                      </Button>
+                      <Button variant="outline" className="w-full border-gray-200 text-gray-700 hover:bg-gray-50 rounded-none py-3">
+                        <MessageSquare className="mr-2 h-4 w-4" />
+                        Send Message
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="font-semibold mb-3">About</h3>
+                      <p className="text-gray-600 leading-relaxed">{selectedTrainer.description}</p>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-semibold mb-3">Certifications</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedTrainer.certifications.map((cert, index) => (
+                          <Badge key={index} variant="outline" className="rounded-none">{cert}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -129,89 +181,108 @@ const Trainers = () => {
             </div>
             
             <h1 className="text-4xl md:text-5xl font-light mb-6 text-gray-900 leading-tight">
-              Find Your Perfect 
+              Train with the
               <br />
-              <span className="font-semibold">Personal Trainer</span>
+              <span className="font-semibold">Best in the Industry</span>
             </h1>
             
             <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-              Connect with certified fitness professionals across Kenya for personalized training sessions at affordable rates.
+              Connect with certified personal trainers who specialize in your goals. From strength building to rehabilitation, find your perfect fitness mentor.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Filters Section */}
-      <section className="py-8 bg-gray-50 border-y border-gray-100">
+      {/* Trainers Grid */}
+      <section className="pb-24">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row gap-4 items-center max-w-4xl mx-auto">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                placeholder="Search trainers or specialties..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 border-gray-200 focus:border-gray-400 rounded-none"
-              />
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-4">
+                Our Expert Trainers
+              </h2>
+              <p className="text-lg text-gray-600">
+                Each trainer is certified, experienced, and committed to your success
+              </p>
             </div>
-            <Select value={selectedLocation} onValueChange={setSelectedLocation}>
-              <SelectTrigger className="w-full md:w-48 border-gray-200 rounded-none">
-                <SelectValue placeholder="Location" />
-              </SelectTrigger>
-              <SelectContent>
-                {locations.map(location => (
-                  <SelectItem key={location} value={location}>
-                    {location === "all" ? "All Locations" : location}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={selectedSpecialty} onValueChange={setSelectedSpecialty}>
-              <SelectTrigger className="w-full md:w-48 border-gray-200 rounded-none">
-                <SelectValue placeholder="Specialty" />
-              </SelectTrigger>
-              <SelectContent>
-                {specialties.map(specialty => (
-                  <SelectItem key={specialty} value={specialty}>
-                    {specialty === "all" ? "All Specialties" : specialty}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {trainers.map((trainer) => (
+                <Card key={trainer.id} className="border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/trainers/book/${trainer.id}`)}>
+                  <div className="grid md:grid-cols-2">
+                    <div className="aspect-[4/3] md:aspect-auto overflow-hidden">
+                      <img 
+                        src={trainer.image} 
+                        alt={trainer.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    
+                    <div className="p-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-semibold text-lg">{trainer.name}</h3>
+                        <div className="flex items-center">
+                          <Star className="h-4 w-4 text-yellow-500 fill-current mr-1" />
+                          <span className="text-sm font-medium">{trainer.rating}</span>
+                        </div>
+                      </div>
+                      
+                      <p className="text-gray-600 mb-3">{trainer.specialty}</p>
+                      
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center text-sm text-gray-500">
+                          <MapPin className="h-3 w-3 mr-2" />
+                          {trainer.location}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-500">
+                          <DollarSign className="h-3 w-3 mr-2" />
+                          ${trainer.hourlyRate}/hour
+                        </div>
+                        <div className="flex items-center text-sm text-gray-500">
+                          <Users className="h-3 w-3 mr-2" />
+                          {trainer.reviews} reviews
+                        </div>
+                      </div>
+                      
+                      <Button className="w-full bg-black text-white hover:bg-gray-800 rounded-none text-sm">
+                        View Profile
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Trainers Grid */}
-      <section className="py-16 md:py-24">
+      {/* Premium Features */}
+      <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {filteredTrainers.map((trainer) => (
-              <TrainerCard
-                key={trainer.id}
-                trainer={trainer}
-                onBookOnline={handleBookOnline}
-                onBookPhysical={handleBookPhysical}
-              />
-            ))}
-          </div>
-          
-          {filteredTrainers.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-lg text-gray-600">No trainers found matching your criteria.</p>
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  setSearchTerm("");
-                  setSelectedLocation("all");
-                  setSelectedSpecialty("all");
-                }}
-                className="mt-4 border-gray-200 rounded-none"
-              >
-                Clear Filters
-              </Button>
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-8">
+              Why Choose Our Trainers
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <Award className="h-8 w-8 text-gray-400 mx-auto mb-4" />
+                <h4 className="font-semibold text-gray-900 mb-2">Certified Professionals</h4>
+                <p className="text-sm text-gray-600">All trainers hold industry-recognized certifications</p>
+              </div>
+              <div className="text-center">
+                <Users className="h-8 w-8 text-gray-400 mx-auto mb-4" />
+                <h4 className="font-semibold text-gray-900 mb-2">Proven Track Record</h4>
+                <p className="text-sm text-gray-600">Hundreds of successful client transformations</p>
+              </div>
+              <div className="text-center">
+                <MessageSquare className="h-8 w-8 text-gray-400 mx-auto mb-4" />
+                <h4 className="font-semibold text-gray-900 mb-2">Ongoing Support</h4>
+                <p className="text-sm text-gray-600">24/7 communication and progress tracking</p>
+              </div>
             </div>
-          )}
+          </div>
         </div>
       </section>
     </div>

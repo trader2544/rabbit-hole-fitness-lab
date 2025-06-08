@@ -1,167 +1,209 @@
+
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, Home, BookOpen, Calculator, Users, Crown } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { 
+  Menu, 
+  X, 
+  User, 
+  LogOut, 
+  ShoppingCart,
+  Settings,
+  UserCircle 
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/hooks/useAuth";
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const { user, signOut, isAdmin } = useAuth();
+  const navigate = useNavigate();
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const navLinks = [
-    { name: "Services", path: "/trainers", icon: Users },
-    { name: "Education", path: "/education", icon: BookOpen },
-    { name: "Tools", path: "/tools", icon: Calculator },
-    { name: "Resources", path: "/resources", icon: Crown }
+  const navItems = [
+    { name: "Education", href: "/education" },
+    { name: "Tools", href: "/tools" },
+    { name: "Trainers", href: "/trainers" },
+    { name: "Resources", href: "/resources" },
+    { name: "Shop", href: "/shop" },
   ];
 
-  return (
-    <>
-      {/* Desktop Navigation */}
-      <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 hidden md:block">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <NavLink to="/" className="flex items-center">
-            <span className="font-light text-2xl text-gray-900">
-              Rabbit Hole <span className="font-semibold">Fitness</span>
-            </span>
-          </NavLink>
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
-          <div className="flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.name}
-                to={link.path}
-                className={({ isActive }) =>
-                  `text-sm font-normal transition-colors ${
-                    isActive
-                      ? "text-black font-medium"
-                      : "text-gray-600 hover:text-black"
-                  }`
-                }
+  return (
+    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-black rounded-none"></div>
+            <span className="text-xl font-light text-gray-900">FitnessPro</span>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                className="text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium"
               >
-                {link.name}
-              </NavLink>
+                {item.name}
+              </Link>
             ))}
-            <div className="flex items-center space-x-4 ml-6 pl-6 border-l border-gray-200">
-              <Button variant="ghost" size="sm" className="text-gray-600 hover:text-black font-normal">
+          </div>
+
+          {/* Desktop Auth */}
+          <div className="hidden md:flex items-center space-x-4">
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <UserCircle className="h-6 w-6" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end">
+                  <div className="flex items-center justify-start gap-2 p-2">
+                    <div className="flex flex-col space-y-1 leading-none">
+                      <p className="font-medium">{user.email}</p>
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/profile")}>
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/shop")}>
+                    <ShoppingCart className="mr-2 h-4 w-4" />
+                    Shop
+                  </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem onClick={() => navigate("/admin")}>
+                      <Settings className="mr-2 h-4 w-4" />
+                      Admin
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button 
+                onClick={() => navigate("/auth")}
+                className="bg-black text-white hover:bg-gray-800 rounded-none"
+              >
                 Sign In
               </Button>
-              <Button size="sm" className="bg-black text-white hover:bg-gray-800 rounded-none px-6">
-                Get Started
-              </Button>
-            </div>
+            )}
           </div>
-        </div>
-      </nav>
 
-      {/* Mobile App-like Navigation */}
-      <div className="md:hidden">
-        {/* Mobile Top Bar */}
-        <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
-          <div className="px-4 py-3 flex justify-between items-center">
-            <NavLink to="/" className="flex items-center">
-              <span className="font-light text-lg text-gray-900">
-                Rabbit Hole <span className="font-semibold">Fitness</span>
-              </span>
-            </NavLink>
-            
-            <div className="flex items-center space-x-3">
-              <Button variant="ghost" size="icon" className="h-9 w-9">
-                <User className="h-5 w-5" />
+          {/* Mobile menu button */}
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="md:hidden">
+                <Menu className="h-6 w-6" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={toggleMenu} className="h-9 w-9">
-                {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </Button>
-            </div>
-          </div>
-        </nav>
-
-        {/* Mobile Bottom Navigation Bar */}
-        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
-          <div className="grid grid-cols-5 h-16">
-            <NavLink 
-              to="/" 
-              className={({ isActive }) =>
-                `flex flex-col items-center justify-center space-y-1 ${
-                  isActive ? "text-black" : "text-gray-500"
-                }`
-              }
-            >
-              <Home className="h-5 w-5" />
-              <span className="text-xs font-medium">Home</span>
-            </NavLink>
-            
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.name}
-                to={link.path}
-                className={({ isActive }) =>
-                  `flex flex-col items-center justify-center space-y-1 ${
-                    isActive ? "text-black" : "text-gray-500"
-                  }`
-                }
-              >
-                <link.icon className="h-5 w-5" />
-                <span className="text-xs font-medium">{link.name}</span>
-              </NavLink>
-            ))}
-          </div>
-        </nav>
-
-        {/* Mobile Full Screen Menu Overlay */}
-        {isMenuOpen && (
-          <div className="fixed inset-0 bg-white z-50 pt-16">
-            <div className="px-6 py-8 space-y-8">
-              <div className="space-y-6">
-                <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Navigation</h3>
-                {navLinks.map((link) => (
-                  <NavLink
-                    key={link.name}
-                    to={link.path}
-                    className="flex items-center space-x-4 text-2xl font-light text-gray-900"
-                    onClick={() => setIsMenuOpen(false)}
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+              <div className="flex flex-col space-y-4 mt-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-lg font-semibold">Menu</span>
+                </div>
+                
+                {navItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className="text-gray-600 hover:text-gray-900 transition-colors py-2 text-base"
+                    onClick={() => setIsOpen(false)}
                   >
-                    <link.icon className="h-6 w-6" />
-                    <span>{link.name}</span>
-                  </NavLink>
+                    {item.name}
+                  </Link>
                 ))}
-              </div>
-
-              <div className="pt-8 border-t border-gray-100 space-y-4">
-                <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Account</h3>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start text-lg py-6 rounded-none border-gray-200"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sign In
-                </Button>
-                <Button 
-                  className="w-full justify-start text-lg py-6 bg-black text-white hover:bg-gray-800 rounded-none"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Get Started
-                </Button>
-              </div>
-
-              <div className="pt-8 border-t border-gray-100">
-                <div className="bg-gray-50 p-6 rounded-none">
-                  <h4 className="font-semibold text-gray-900 mb-2">Premium Access</h4>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Join our exclusive community of high-performers
-                  </p>
-                  <Button size="sm" className="bg-black text-white hover:bg-gray-800 rounded-none">
-                    Learn More
-                  </Button>
+                
+                <div className="pt-4 border-t border-gray-200">
+                  {user ? (
+                    <div className="space-y-2">
+                      <div className="text-sm text-gray-600 mb-4">
+                        Signed in as {user.email}
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-start"
+                        onClick={() => {
+                          navigate("/profile");
+                          setIsOpen(false);
+                        }}
+                      >
+                        <User className="mr-2 h-4 w-4" />
+                        Profile
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-start"
+                        onClick={() => {
+                          navigate("/shop");
+                          setIsOpen(false);
+                        }}
+                      >
+                        <ShoppingCart className="mr-2 h-4 w-4" />
+                        Shop
+                      </Button>
+                      {isAdmin && (
+                        <Button 
+                          variant="ghost" 
+                          className="w-full justify-start"
+                          onClick={() => {
+                            navigate("/admin");
+                            setIsOpen(false);
+                          }}
+                        >
+                          <Settings className="mr-2 h-4 w-4" />
+                          Admin
+                        </Button>
+                      )}
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-start text-red-600"
+                        onClick={() => {
+                          handleSignOut();
+                          setIsOpen(false);
+                        }}
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sign Out
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button 
+                      onClick={() => {
+                        navigate("/auth");
+                        setIsOpen(false);
+                      }}
+                      className="w-full bg-black text-white hover:bg-gray-800 rounded-none"
+                    >
+                      Sign In
+                    </Button>
+                  )}
                 </div>
               </div>
-            </div>
-          </div>
-        )}
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
-    </>
+    </nav>
   );
 };
 

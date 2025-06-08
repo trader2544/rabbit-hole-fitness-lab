@@ -1,10 +1,12 @@
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Star, Users, Clock, Award, Play, CheckCircle, ShoppingBag } from "lucide-react";
+import { ArrowRight, Star, Users, Clock, Award, CheckCircle, ShoppingBag, UserPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const Hero = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const stats = [
     { icon: Users, value: "500+", label: "Clients Transformed" },
@@ -19,34 +21,45 @@ const Hero = () => {
       description: "1-on-1 sessions with certified professionals",
       price: "From $75/hour",
       features: ["Online & In-person", "Custom Programs", "Progress Tracking"],
-      link: "/trainers"
+      link: "/trainers",
+      requiresAuth: true
     },
     {
       title: "Premium Coaching",
       description: "Comprehensive lifestyle transformation",
       price: "From $79/month",
       features: ["Nutrition Plans", "Recovery Protocols", "24/7 Support"],
-      link: "/resources"
+      link: "/resources",
+      requiresAuth: true
     },
     {
       title: "Master Classes",
       description: "Advanced technique & specialty training",
       price: "From $29/month",
       features: ["Expert Instruction", "Video Library", "Certificates"],
-      link: "/resources"
+      link: "/resources",
+      requiresAuth: true
     },
     {
       title: "Premium Equipment",
       description: "Curated fitness gear & supplements",
       price: "From $29.99",
       features: ["Expert Tested", "Free Shipping", "Quality Guarantee"],
-      link: "/shop"
+      link: "/shop",
+      requiresAuth: false
     }
   ];
 
+  const handleServiceClick = (service: any) => {
+    if (service.requiresAuth && !user) {
+      navigate('/auth');
+    } else {
+      navigate(service.link);
+    }
+  };
+
   return (
     <section className="relative bg-white min-h-screen flex items-center pt-16 md:pt-0">
-      {/* Mobile: Add padding for bottom nav */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white opacity-60"></div>
       
       <div className="container mx-auto px-4 relative z-10 pb-20 md:pb-0">
@@ -70,23 +83,47 @@ const Hero = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 mb-12 justify-center lg:justify-start">
-                <Button 
-                  size="lg" 
-                  onClick={() => navigate("/trainers")}
-                  className="bg-black text-white hover:bg-gray-800 rounded-none px-8 py-6 text-lg font-normal"
-                >
-                  Book Elite Trainer
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="lg" 
-                  onClick={() => navigate("/shop")}
-                  className="border-2 border-gray-200 text-gray-700 hover:bg-gray-50 rounded-none px-8 py-6 text-lg font-normal"
-                >
-                  <ShoppingBag className="mr-2 h-5 w-5" />
-                  Shop Equipment
-                </Button>
+                {user ? (
+                  <>
+                    <Button 
+                      size="lg" 
+                      onClick={() => navigate("/trainers")}
+                      className="bg-black text-white hover:bg-gray-800 rounded-none px-8 py-6 text-lg font-normal"
+                    >
+                      Book Elite Trainer
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="lg" 
+                      onClick={() => navigate("/shop")}
+                      className="border-2 border-gray-200 text-gray-700 hover:bg-gray-50 rounded-none px-8 py-6 text-lg font-normal"
+                    >
+                      <ShoppingBag className="mr-2 h-5 w-5" />
+                      Shop Equipment
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button 
+                      size="lg" 
+                      onClick={() => navigate("/auth")}
+                      className="bg-black text-white hover:bg-gray-800 rounded-none px-8 py-6 text-lg font-normal"
+                    >
+                      <UserPlus className="mr-2 h-5 w-5" />
+                      Join Now
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="lg" 
+                      onClick={() => navigate("/shop")}
+                      className="border-2 border-gray-200 text-gray-700 hover:bg-gray-50 rounded-none px-8 py-6 text-lg font-normal"
+                    >
+                      <ShoppingBag className="mr-2 h-5 w-5" />
+                      Shop Equipment
+                    </Button>
+                  </>
+                )}
               </div>
 
               {/* Stats - Mobile Optimized */}
@@ -114,7 +151,7 @@ const Hero = () => {
                   <div 
                     key={index} 
                     className="bg-white p-4 lg:p-6 border-l-4 border-black cursor-pointer hover:shadow-md transition-shadow"
-                    onClick={() => navigate(service.link)}
+                    onClick={() => handleServiceClick(service)}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <h4 className="font-semibold text-gray-900 text-sm lg:text-base">{service.title}</h4>
@@ -129,6 +166,9 @@ const Hero = () => {
                         </div>
                       ))}
                     </div>
+                    {service.requiresAuth && !user && (
+                      <p className="text-xs text-blue-600 mt-2">Sign in required</p>
+                    )}
                   </div>
                 ))}
               </div>
@@ -138,10 +178,10 @@ const Hero = () => {
                   Join our exclusive community of high-performers
                 </p>
                 <Button 
-                  onClick={() => navigate("/trainers")}
+                  onClick={() => user ? navigate("/trainers") : navigate("/auth")}
                   className="w-full bg-black text-white hover:bg-gray-800 rounded-none py-3"
                 >
-                  Start Your Journey
+                  {user ? "Start Your Journey" : "Join Now"}
                 </Button>
               </div>
             </div>

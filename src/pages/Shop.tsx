@@ -1,96 +1,50 @@
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingCart, Plus, Minus, Star, Package, Truck, Shield, ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-
-const products = [
-  {
-    id: 1,
-    name: "Premium Resistance Bands Set",
-    price: 49.99,
-    originalPrice: 79.99,
-    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    rating: 4.8,
-    reviews: 124,
-    category: "Equipment",
-    description: "Professional-grade resistance bands with multiple resistance levels"
-  },
-  {
-    id: 2,
-    name: "Whey Protein Isolate",
-    price: 39.99,
-    originalPrice: 54.99,
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    rating: 4.9,
-    reviews: 287,
-    category: "Supplements",
-    description: "Premium whey protein isolate for muscle recovery and growth"
-  },
-  {
-    id: 3,
-    name: "Smart Fitness Tracker",
-    price: 199.99,
-    originalPrice: 249.99,
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    rating: 4.7,
-    reviews: 156,
-    category: "Technology",
-    description: "Advanced fitness tracking with heart rate and sleep monitoring"
-  },
-  {
-    id: 4,
-    name: "Adjustable Dumbbells",
-    price: 299.99,
-    originalPrice: 399.99,
-    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    rating: 4.9,
-    reviews: 89,
-    category: "Equipment",
-    description: "Space-saving adjustable dumbbells with quick-change mechanism"
-  },
-  {
-    id: 5,
-    name: "Pre-Workout Formula",
-    price: 29.99,
-    originalPrice: 39.99,
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    rating: 4.6,
-    reviews: 203,
-    category: "Supplements",
-    description: "Clean energy and focus for intense training sessions"
-  },
-  {
-    id: 6,
-    name: "Yoga Mat Pro",
-    price: 79.99,
-    originalPrice: 99.99,
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    rating: 4.8,
-    reviews: 167,
-    category: "Equipment",
-    description: "Premium non-slip yoga mat with superior cushioning"
-  }
-];
+import { ShoppingCart, Plus, Minus, Star, Package, Truck, Shield } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const Shop = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [loading, setLoading] = useState(true);
 
   const categories = ["All", "Equipment", "Supplements", "Technology"];
 
+  useEffect(() => {
+    fetchProducts();
+    window.scrollTo(0, 0);
+  }, []);
+
+  const fetchProducts = async () => {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .eq('in_stock', true)
+      .order('created_at', { ascending: false });
+
+    if (data) {
+      setProducts(data);
+    }
+    setLoading(false);
+  };
+
   const filteredProducts = selectedCategory === "All" 
     ? products 
-    : products.filter(product => product.category === selectedCategory);
+    : products.filter((product: any) => product.category === selectedCategory);
 
-  const addToCart = (product) => {
+  const addToCart = (product: any) => {
     setCart(prevCart => {
-      const existingItem = prevCart.find(item => item.id === product.id);
+      const existingItem = prevCart.find((item: any) => item.id === product.id);
       if (existingItem) {
-        return prevCart.map(item =>
+        return prevCart.map((item: any) =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
@@ -100,12 +54,12 @@ const Shop = () => {
     });
   };
 
-  const updateQuantity = (productId, newQuantity) => {
+  const updateQuantity = (productId: string, newQuantity: number) => {
     if (newQuantity === 0) {
-      setCart(prevCart => prevCart.filter(item => item.id !== productId));
+      setCart(prevCart => prevCart.filter((item: any) => item.id !== productId));
     } else {
       setCart(prevCart =>
-        prevCart.map(item =>
+        prevCart.map((item: any) =>
           item.id === productId
             ? { ...item, quantity: newQuantity }
             : item
@@ -115,16 +69,34 @@ const Shop = () => {
   };
 
   const getTotalItems = () => {
-    return cart.reduce((total, item) => total + item.quantity, 0);
+    return cart.reduce((total: number, item: any) => total + item.quantity, 0);
   };
 
   const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cart.reduce((total: number, item: any) => total + (item.price * item.quantity), 0);
   };
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  const handleCheckout = () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+
+    const cartData = encodeURIComponent(JSON.stringify(cart));
+    const total = getTotalPrice().toFixed(2);
+    navigate(`/checkout?cart=${cartData}&total=${total}`);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <Package className="h-12 w-12 text-gray-400 mx-auto mb-4 animate-spin" />
+          <p className="text-gray-600">Loading products...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -175,7 +147,7 @@ const Shop = () => {
                   </div>
                   <Button 
                     className="bg-black text-white hover:bg-gray-800 rounded-none"
-                    onClick={() => {/* Navigate to checkout */}}
+                    onClick={handleCheckout}
                   >
                     <ShoppingCart className="mr-2 h-4 w-4" />
                     Checkout
@@ -192,8 +164,8 @@ const Shop = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.map((product) => {
-                const cartItem = cart.find(item => item.id === product.id);
+              {filteredProducts.map((product: any) => {
+                const cartItem = cart.find((item: any) => item.id === product.id);
                 const quantity = cartItem ? cartItem.quantity : 0;
                 
                 return (
@@ -201,14 +173,16 @@ const Shop = () => {
                     <div className="relative">
                       <div className="aspect-[4/3] overflow-hidden">
                         <img 
-                          src={product.image} 
+                          src={product.image_url} 
                           alt={product.name}
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <Badge className="absolute top-3 left-3 bg-red-500 text-white rounded-none">
-                        {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
-                      </Badge>
+                      {product.original_price && (
+                        <Badge className="absolute top-3 left-3 bg-red-500 text-white rounded-none">
+                          {Math.round((1 - product.price / product.original_price) * 100)}% OFF
+                        </Badge>
+                      )}
                     </div>
                     
                     <CardHeader className="pb-3">
@@ -227,7 +201,9 @@ const Shop = () => {
                       <p className="text-sm text-gray-600 mb-4">{product.description}</p>
                       <div className="flex items-center space-x-2 mb-4">
                         <span className="text-lg font-semibold">${product.price}</span>
-                        <span className="text-sm text-gray-500 line-through">${product.originalPrice}</span>
+                        {product.original_price && (
+                          <span className="text-sm text-gray-500 line-through">${product.original_price}</span>
+                        )}
                       </div>
                     </CardContent>
                     

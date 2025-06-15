@@ -1,11 +1,12 @@
 
-import { useState, useEffect } from "react";
-import { Bell } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
+import { useState, useEffect } from 'react';
+import { Bell, Check, X, Info, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Notification {
   id: string;
@@ -16,10 +17,12 @@ interface Notification {
   created_at: string;
 }
 
-export default function NotificationCenter() {
+const NotificationCenter = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const { user } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
 
   const fetchNotifications = async () => {
     if (!user) return;
@@ -28,20 +31,20 @@ export default function NotificationCenter() {
       .from('notifications')
       .select('*')
       .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(10);
+      .order('created_at', { ascending: false });
 
     if (error) {
       console.error('Error fetching notifications:', error);
-    } else if (data) {
-      const typedNotifications = data.map(notification => ({
-        ...notification,
-        type: notification.type as 'info' | 'success' | 'warning' | 'error'
-      }));
-      setNotifications(typedNotifications);
-      setUnreadCount(typedNotifications.filter(n => !n.read).length);
+      return;
     }
+
+    setNotifications(data || []);
+    setUnreadCount(data?.filter(n => !n.read).length || 0);
   };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, [user]);
 
   const markAsRead = async (notificationId: string) => {
     const { error } = await supabase
@@ -50,76 +53,109 @@ export default function NotificationCenter() {
       .eq('id', notificationId);
 
     if (!error) {
-      setNotifications(prev => 
-        prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
-      );
-      setUnreadCount(prev => Math.max(0, prev - 1));
+      fetchNotifications();
     }
   };
 
-  useEffect(() => {
-    fetchNotifications();
-  }, [user]);
+  const markAllAsRead = async () => {
+    if (!user) return;
 
-  const getNotificationColor = (type: string) => {
+    const { error } = await supabase
+      .from('notifications')
+      .update({ read: true })
+      .eq('user_id', user.id)
+      .eq('read', false);
+
+    if (!error) {
+      fetchNotifications();
+      toast({
+        title: "Success",
+        description: "All notifications marked as read"
+      });
+    }
+  };
+
+  const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'success': return 'text-green-600';
-      case 'warning': return 'text-yellow-600';
-      case 'error': return 'text-red-600';
-      default: return 'text-blue-600';
+      case 'success': return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case 'warning': return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+      case 'error': return <XCircle className="h-4 w-4 text-red-500" />;
+      default: return <Info className="h-4 w-4 text-blue-500" />;
     }
   };
+
+  if (!user) return null;
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="relative border-gray-200">
-          <Bell className="h-4 w-4" />
-          {unreadCount > 0 && (
-            <Badge 
-              variant="destructive" 
-              className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
-            >
-              {unreadCount}
-            </Badge>
-          )}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-80" align="end">
-        <div className="space-y-4">
-          <h3 className="font-semibold">Notifications</h3>
-          {notifications.length === 0 ? (
-            <p className="text-sm text-gray-500">No notifications</p>
-          ) : (
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-              {notifications.map((notification) => (
+    <div className="relative">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setIsOpen(!isOpen)}
+        className="relative border-gray-200"
+      >
+        <Bell className="h-4 w-4" />
+        {unreadCount > 0 && (
+          <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
+            {unreadCount}
+          </Badge>
+        )}
+      </Button>
+
+      {isOpen && (
+        <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-gray-200 shadow-lg z-50">
+          <div className="p-4 border-b border-gray-200">
+            <div className="flex justify-between items-center">
+              <h3 className="font-semibold">Notifications</h3>
+              <div className="flex gap-2">
+                {unreadCount > 0 && (
+                  <Button variant="ghost" size="sm" onClick={markAllAsRead}>
+                    <Check className="h-4 w-4 mr-1" />
+                    Mark all read
+                  </Button>
+                )}
+                <Button variant="ghost" size="sm" onClick={() => setIsOpen(false)}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <div className="max-h-96 overflow-y-auto">
+            {notifications.length === 0 ? (
+              <div className="p-4 text-center text-gray-500">
+                No notifications yet
+              </div>
+            ) : (
+              notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-3 border rounded cursor-pointer transition-colors ${
-                    notification.read ? 'bg-gray-50' : 'bg-white border-blue-200'
+                  className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
+                    !notification.read ? 'bg-blue-50' : ''
                   }`}
                   onClick={() => !notification.read && markAsRead(notification.id)}
                 >
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3">
+                    {getTypeIcon(notification.type)}
                     <div className="flex-1">
-                      <p className={`font-medium text-sm ${getNotificationColor(notification.type)}`}>
-                        {notification.title}
-                      </p>
+                      <h4 className="font-medium text-sm">{notification.title}</h4>
                       <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
                       <p className="text-xs text-gray-400 mt-2">
                         {new Date(notification.created_at).toLocaleDateString()}
                       </p>
                     </div>
                     {!notification.read && (
-                      <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1"></div>
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                     )}
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+              ))
+            )}
+          </div>
         </div>
-      </PopoverContent>
-    </Popover>
+      )}
+    </div>
   );
-}
+};
+
+export default NotificationCenter;

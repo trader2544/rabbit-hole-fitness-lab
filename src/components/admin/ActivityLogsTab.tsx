@@ -1,11 +1,11 @@
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { supabase } from "@/integrations/supabase/client";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { RefreshCw, Eye, Filter } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { supabase } from '@/integrations/supabase/client';
+import { Badge } from '@/components/ui/badge';
 
 interface ActivityLog {
   id: string;
@@ -17,99 +17,117 @@ interface ActivityLog {
   profiles?: {
     full_name: string;
     email: string;
-  } | null;
+  };
 }
 
-export default function ActivityLogsTab() {
-  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
+const ActivityLogsTab = () => {
+  const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
 
-  const fetchActivityLogs = async () => {
+  const fetchLogs = async () => {
     setLoading(true);
-    const { data, error } = await supabase
+    let query = supabase
       .from('activity_logs')
       .select(`
         *,
-        profiles!inner(full_name, email)
+        profiles(full_name, email)
       `)
-      .order('created_at', { ascending: false })
-      .limit(100);
+      .order('created_at', { ascending: false });
+
+    if (filter !== 'all') {
+      query = query.ilike('activity_type', `%${filter}%`);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('Error fetching activity logs:', error);
     } else {
-      setActivityLogs(data || []);
+      setLogs(data || []);
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchActivityLogs();
-  }, []);
+    fetchLogs();
+  }, [filter]);
 
-  const getActivityTypeColor = (type: string) => {
-    if (type.includes('created')) return 'default';
-    if (type.includes('updated')) return 'secondary';
-    if (type.includes('deleted')) return 'destructive';
-    return 'outline';
+  const getActivityBadge = (activityType: string) => {
+    if (activityType.includes('booking')) return 'bg-blue-100 text-blue-800';
+    if (activityType.includes('order')) return 'bg-green-100 text-green-800';
+    if (activityType.includes('subscription')) return 'bg-purple-100 text-purple-800';
+    return 'bg-gray-100 text-gray-800';
   };
-
-  if (loading) {
-    return (
-      <Card className="border border-gray-200">
-        <CardContent className="p-6 text-center">
-          <p className="text-gray-500">Loading activity logs...</p>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Activity Logs</h2>
-        <Button variant="outline" size="sm" onClick={fetchActivityLogs} className="rounded-none border-gray-200">
-          <RefreshCw className="h-4 w-4 mr-2" />
+        <div className="flex items-center gap-4">
+          <Select value={filter} onValueChange={setFilter}>
+            <SelectTrigger className="w-40 rounded-none border-gray-200">
+              <Filter className="h-4 w-4 mr-2" />
+              <SelectValue placeholder="Filter" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Activities</SelectItem>
+              <SelectItem value="booking">Bookings</SelectItem>
+              <SelectItem value="order">Orders</SelectItem>
+              <SelectItem value="subscription">Subscriptions</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <Button variant="outline" size="sm" onClick={fetchLogs} disabled={loading}>
+          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           Refresh
         </Button>
       </div>
 
-      <Card className="border border-gray-200">
-        <CardHeader>
-          <CardTitle>Recent User Activities</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>User</TableHead>
-                <TableHead>Activity</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Date</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {activityLogs.map((log) => (
-                <TableRow key={log.id}>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{log.profiles?.full_name || 'Unknown User'}</p>
-                      <p className="text-sm text-gray-500">{log.profiles?.email}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={getActivityTypeColor(log.activity_type)} className="capitalize">
-                      {log.activity_type.replace('_', ' ')}
+      <div className="space-y-3">
+        {logs.map((log) => (
+          <Card key={log.id} className="border border-gray-200">
+            <CardContent className="p-4">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge className={getActivityBadge(log.activity_type)}>
+                      {log.activity_type.replace('_', ' ').toUpperCase()}
                     </Badge>
-                  </TableCell>
-                  <TableCell>{log.description}</TableCell>
-                  <TableCell>{new Date(log.created_at).toLocaleString()}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                    <span className="text-sm text-gray-500">
+                      {new Date(log.created_at).toLocaleString()}
+                    </span>
+                  </div>
+                  <p className="font-medium">{log.description}</p>
+                  <p className="text-sm text-gray-600">
+                    User: {log.profiles?.full_name || 'Unknown'} ({log.profiles?.email || 'No email'})
+                  </p>
+                  {log.metadata && (
+                    <details className="mt-2">
+                      <summary className="text-sm text-gray-500 cursor-pointer">
+                        <Eye className="inline h-3 w-3 mr-1" />
+                        View Details
+                      </summary>
+                      <pre className="text-xs bg-gray-50 p-2 mt-1 rounded overflow-auto">
+                        {JSON.stringify(log.metadata, null, 2)}
+                      </pre>
+                    </details>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+
+        {logs.length === 0 && !loading && (
+          <Card className="border border-gray-200">
+            <CardContent className="p-6 text-center text-gray-500">
+              No activity logs found.
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
-}
+};
+
+export default ActivityLogsTab;

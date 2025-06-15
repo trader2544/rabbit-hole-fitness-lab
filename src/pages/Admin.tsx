@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Package, Calendar, Settings, FileText, Star, Activity, Bell, BookOpen, Clock } from "lucide-react";
+import { Users, Package, Calendar, Settings, FileText, Star, Activity, Bell } from "lucide-react";
 import ProductsTab from "@/components/admin/ProductsTab";
 import OrdersTab from "@/components/admin/OrdersTab";
 import BookingsTab from "@/components/admin/BookingsTab";
@@ -13,8 +13,6 @@ import ResourcesTab from "@/components/admin/ResourcesTab";
 import SubscriptionsTab from "@/components/admin/SubscriptionsTab";
 import ActivityLogsTab from "@/components/admin/ActivityLogsTab";
 import NotificationsManagement from "@/components/admin/NotificationsManagement";
-import BlogsTab from "@/components/admin/BlogsTab";
-import SchedulesTab from "@/components/admin/SchedulesTab";
 
 const Admin = () => {
   const { isAdmin } = useAuth();
@@ -104,15 +102,13 @@ const Admin = () => {
           <h1 className="text-3xl font-light text-gray-900 mb-8">Admin Dashboard</h1>
 
           <Tabs defaultValue="products" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-10 rounded-none">
+            <TabsList className="grid w-full grid-cols-8 rounded-none">
               <TabsTrigger value="products" className="rounded-none"><Package className="mr-2 h-4 w-4" />Products</TabsTrigger>
               <TabsTrigger value="orders" className="rounded-none"><Package className="mr-2 h-4 w-4" />Orders</TabsTrigger>
               <TabsTrigger value="bookings" className="rounded-none"><Calendar className="mr-2 h-4 w-4" />Bookings</TabsTrigger>
               <TabsTrigger value="users" className="rounded-none"><Users className="mr-2 h-4 w-4" />Users</TabsTrigger>
               <TabsTrigger value="resources" className="rounded-none"><FileText className="mr-2 h-4 w-4" />Resources</TabsTrigger>
               <TabsTrigger value="subscriptions" className="rounded-none"><Star className="mr-2 h-4 w-4" />Subscriptions</TabsTrigger>
-              <TabsTrigger value="blogs" className="rounded-none"><BookOpen className="mr-2 h-4 w-4" />Blogs</TabsTrigger>
-              <TabsTrigger value="schedules" className="rounded-none"><Clock className="mr-2 h-4 w-4" />Schedules</TabsTrigger>
               <TabsTrigger value="activity" className="rounded-none"><Activity className="mr-2 h-4 w-4" />Activity</TabsTrigger>
               <TabsTrigger value="notifications" className="rounded-none"><Bell className="mr-2 h-4 w-4" />Notifications</TabsTrigger>
             </TabsList>
@@ -123,8 +119,6 @@ const Admin = () => {
             <TabsContent value="users"><UsersTab users={users} /></TabsContent>
             <TabsContent value="resources"><ResourcesTab resources={resources} fetchResources={fetchResources} /></TabsContent>
             <TabsContent value="subscriptions"><SubscriptionsTab subscriptions={subscriptions} fetchSubscriptions={fetchSubscriptions} /></TabsContent>
-            <TabsContent value="blogs"><BlogsTab /></TabsContent>
-            <TabsContent value="schedules"><SchedulesTab /></TabsContent>
             <TabsContent value="activity"><ActivityLogsTab /></TabsContent>
             <TabsContent value="notifications"><NotificationsManagement /></TabsContent>
           </Tabs>

@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Star, Users, Clock, Award, CheckCircle, ShoppingBag, UserPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -17,33 +16,29 @@ const Hero = () => {
 
   const services = [
     {
+      title: "Advanced Fitness Tools",
+      description: "Precision calculators and AI-powered assistance.",
+      features: ["BMI Calculator", "Calorie Tracker", "AI Coach"],
+      link: "/tools",
+      requiresAuth: false
+    },
+    {
+      title: "Education & Resources",
+      description: "In-depth courses, articles, and a free resource library.",
+      features: ["Expert Courses", "Free Guides", "Video Library"],
+      link: "/education",
+      requiresAuth: false
+    },
+    {
       title: "Elite Personal Training",
-      description: "1-on-1 sessions with certified professionals",
-      price: "From $75/hour",
+      description: "1-on-1 sessions with certified professionals.",
       features: ["Online & In-person", "Custom Programs", "Progress Tracking"],
       link: "/trainers",
       requiresAuth: true
     },
     {
-      title: "Premium Coaching",
-      description: "Comprehensive lifestyle transformation",
-      price: "From $79/month",
-      features: ["Nutrition Plans", "Recovery Protocols", "24/7 Support"],
-      link: "/resources",
-      requiresAuth: true
-    },
-    {
-      title: "Master Classes",
-      description: "Advanced technique & specialty training",
-      price: "From $29/month",
-      features: ["Expert Instruction", "Video Library", "Certificates"],
-      link: "/resources",
-      requiresAuth: true
-    },
-    {
       title: "Premium Equipment",
-      description: "Curated fitness gear & supplements",
-      price: "From $29.99",
+      description: "Curated fitness gear & supplements.",
       features: ["Expert Tested", "Free Shipping", "Quality Guarantee"],
       link: "/shop",
       requiresAuth: false
@@ -143,19 +138,19 @@ const Hero = () => {
             {/* Right Column - Services Grid - Mobile Optimized */}
             <div className="bg-gray-50 p-6 lg:p-12 rounded-none">
               <h3 className="text-xl lg:text-2xl font-light text-gray-900 mb-8 text-center">
-                Premium Services
+                Our Core Offerings
               </h3>
               
               <div className="space-y-4 lg:space-y-6">
                 {services.map((service, index) => (
                   <div 
                     key={index} 
-                    className="bg-white p-4 lg:p-6 border-l-4 border-black cursor-pointer hover:shadow-md transition-shadow"
+                    className="bg-white p-4 lg:p-6 border-l-4 border-black cursor-pointer hover:shadow-md transition-shadow group"
                     onClick={() => handleServiceClick(service)}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <h4 className="font-semibold text-gray-900 text-sm lg:text-base">{service.title}</h4>
-                      <span className="text-xs lg:text-sm text-gray-500 font-medium">{service.price}</span>
+                      <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-black group-hover:translate-x-1 transition-transform duration-300" />
                     </div>
                     <p className="text-gray-600 text-xs lg:text-sm mb-3">{service.description}</p>
                     <div className="flex flex-wrap gap-1 lg:gap-2">

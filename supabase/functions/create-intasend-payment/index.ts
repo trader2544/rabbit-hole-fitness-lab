@@ -39,6 +39,9 @@ serve(async (req) => {
 
     console.log('Creating IntaSend payment for order:', orderId);
 
+    // Get the origin from request headers or use your domain
+    const origin = req.headers.get('origin') || 'https://rabbithole.fitness';
+
     // Create payment request with IntaSend - using correct format
     const paymentData = {
       public_key: intasendPublishableKey,
@@ -50,7 +53,7 @@ serve(async (req) => {
       first_name: customerInfo.first_name,
       last_name: customerInfo.last_name,
       phone_number: customerInfo.phone,
-      redirect_url: `${req.headers.get('origin')}/checkout?status=success&order_id=${orderId}`,
+      redirect_url: `${origin}/checkout?status=success&order_id=${orderId}`,
       webhook_url: `${Deno.env.get('SUPABASE_URL')}/functions/v1/intasend-webhook`,
     };
 

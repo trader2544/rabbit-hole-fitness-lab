@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -72,10 +73,18 @@ const Checkout = () => {
 
   const cartData = searchParams.get('cart');
   const totalAmount = searchParams.get('total');
+  const paymentStatus = searchParams.get('status');
+  const orderIdFromUrl = searchParams.get('order_id');
 
   useEffect(() => {
     if (!user) {
       navigate('/auth');
+      return;
+    }
+
+    // Handle payment success redirect
+    if (paymentStatus === 'success' && orderIdFromUrl) {
+      handlePaymentSuccess(orderIdFromUrl);
       return;
     }
 
@@ -90,7 +99,34 @@ const Checkout = () => {
     } else {
       navigate('/shop');
     }
-  }, [user, cartData, navigate]);
+  }, [user, cartData, navigate, paymentStatus, orderIdFromUrl]);
+
+  const handlePaymentSuccess = async (orderId: string) => {
+    try {
+      const { data: fullOrder, error } = await supabase
+        .from('orders')
+        .select('*, order_items(*, products(*))')
+        .eq('id', orderId)
+        .single();
+      
+      if (error) throw error;
+      
+      if (fullOrder) {
+        setCompletedOrder(fullOrder);
+        toast({
+          title: "Payment Successful!",
+          description: "Your order has been confirmed.",
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching order:', error);
+      toast({
+        title: "Error",
+        description: "Could not verify payment status",
+        variant: "destructive"
+      });
+    }
+  };
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,14 +135,17 @@ const Checkout = () => {
     setLoading(true);
 
     try {
-      // Create order
+      // Create order first
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert([{
           user_id: user.id,
           total_amount: parseFloat(totalAmount || '0'),
           status: 'pending',
-          shipping_address: shippingInfo
+          shipping_address: shippingInfo,
+          customer_name: shippingInfo.full_name,
+          customer_email: user.email,
+          customer_phone: shippingInfo.phone
         }])
         .select()
         .single();
@@ -127,24 +166,40 @@ const Checkout = () => {
 
       if (itemsError) throw itemsError;
 
-      const { data: fullOrder, error: fetchError } = await supabase
-        .from('orders')
-        .select('*, order_items(*, products(*))')
-        .eq('id', order.id)
-        .single();
-      
-      if (fetchError) throw fetchError;
-
-      toast({
-        title: "Order Placed Successfully!",
-        description: `Your order #${order.id.slice(0, 8)} has been placed.`
+      // Create IntaSend payment
+      const { data, error } = await supabase.functions.invoke('create-intasend-payment', {
+        body: {
+          amount: parseFloat(totalAmount || '0'),
+          currency: 'KES',
+          orderId: order.id,
+          customerInfo: {
+            email: user.email,
+            first_name: shippingInfo.full_name.split(' ')[0] || 'Customer',
+            last_name: shippingInfo.full_name.split(' ').slice(1).join(' ') || '',
+            phone: shippingInfo.phone
+          }
+        }
       });
 
-      setCompletedOrder(fullOrder);
+      if (error) {
+        console.error('IntaSend payment error:', error);
+        throw new Error('Failed to create payment');
+      }
+
+      console.log('IntaSend payment response:', data);
+
+      // Redirect to IntaSend payment page
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('No payment URL received from IntaSend');
+      }
+
     } catch (error: any) {
+      console.error('Checkout error:', error);
       toast({
         title: "Error",
-        description: error.message || "Failed to place order",
+        description: error.message || "Failed to process payment",
         variant: "destructive"
       });
     } finally {
@@ -271,7 +326,7 @@ const Checkout = () => {
                         <span className="font-medium">Payment Method</span>
                       </div>
                       <p className="text-sm text-gray-600">
-                        Payment processing will be handled securely. This is a demo checkout.
+                        Secure payment processing via IntaSend. Supports mobile money, cards, and bank transfers.
                       </p>
                     </div>
                     
@@ -280,7 +335,7 @@ const Checkout = () => {
                       className="w-full bg-black text-white hover:bg-gray-800 rounded-none py-6"
                       disabled={loading}
                     >
-                      {loading ? "Processing..." : `Place Order (mock) - $${total.toFixed(2)}`}
+                      {loading ? "Processing..." : `Pay with IntaSend - $${total.toFixed(2)}`}
                     </Button>
                   </div>
                 </form>

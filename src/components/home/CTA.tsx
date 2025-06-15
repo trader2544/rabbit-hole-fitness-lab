@@ -1,13 +1,17 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Star, Target, Zap, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const CTA = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { toast } = useToast();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
   const plans = [
     {
@@ -54,11 +58,36 @@ const CTA = () => {
     }
   ];
 
-  const handlePlanSelect = (plan: any) => {
+  const handlePlanSelect = async (plan: any) => {
     if (!user) {
       navigate('/auth');
-    } else {
-      navigate('/resources');
+      return;
+    }
+    setLoadingPlan(plan.name);
+    try {
+      const price = parseFloat(plan.price.replace('$', ''));
+      const { error } = await supabase.from('subscriptions').insert({
+        user_id: user.id,
+        plan_name: plan.name,
+        plan_price: price,
+        status: 'active',
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Subscription Successful!",
+        description: `You've subscribed to the ${plan.name} plan.`,
+      });
+      navigate('/profile?tab=subscriptions');
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to subscribe to plan.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingPlan(null);
     }
   };
 
@@ -120,13 +149,14 @@ const CTA = () => {
                   
                   <Button
                     onClick={() => handlePlanSelect(plan)}
+                    disabled={!!loadingPlan}
                     className={`w-full rounded-none py-6 ${
                       plan.popular 
                         ? 'bg-black text-white hover:bg-gray-800' 
                         : 'bg-white text-black border-2 border-gray-200 hover:bg-gray-50'
                     }`}
                   >
-                    {user ? 'Get Started' : 'Sign Up to Start'}
+                    {loadingPlan === plan.name ? 'Processing...' : (user ? 'Get Started' : 'Sign Up to Start')}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </CardContent>

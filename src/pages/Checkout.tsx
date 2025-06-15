@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,51 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ShoppingCart, CreditCard, Package, Truck } from "lucide-react";
+import { ShoppingCart, CreditCard, Package, Truck, CheckCircle } from "lucide-react";
+
+const OrderConfirmation = ({ order, navigate }: { order: any, navigate: ReturnType<typeof useNavigate>}) => {
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="text-center py-16 px-4">
+        <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+        <h1 className="text-2xl font-semibold text-gray-900">Thank you for your order!</h1>
+        <p className="text-gray-600 mt-2">Your order #{order.id.slice(0, 8)} has been placed successfully.</p>
+        <p className="text-gray-600">You will receive an email confirmation shortly.</p>
+
+        <Card className="mt-8 text-left max-w-lg mx-auto border-gray-200">
+          <CardHeader>
+            <CardTitle className="font-light">Order Summary</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {order.order_items.map((item: any) => (
+                <div key={item.id} className="flex items-center space-x-4">
+                  <img src={item.products.image_url} alt={item.products.name} className="w-16 h-16 object-cover" />
+                  <div className="flex-1">
+                    <p className="font-medium">{item.products.name}</p>
+                    <p className="text-sm text-gray-600">${item.price} × {item.quantity}</p>
+                  </div>
+                  <p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
+                </div>
+              ))}
+              <div className="border-t border-gray-200 pt-4">
+                <div className="flex justify-between items-center text-lg font-semibold">
+                  <span>Total</span>
+                  <span>${order.total_amount.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Button onClick={() => navigate('/shop')} className="w-full sm:w-auto bg-black text-white hover:bg-gray-800 rounded-none py-6 px-8">Continue Shopping</Button>
+            <Button variant="outline" onClick={() => navigate('/profile?tab=orders')} className="w-full sm:w-auto rounded-none py-6 px-8 border-gray-200">View My Orders</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const Checkout = () => {
   const [searchParams] = useSearchParams();
@@ -15,7 +58,7 @@ const Checkout = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [shippingInfo, setShippingInfo] = useState({
     full_name: "",
@@ -25,6 +68,7 @@ const Checkout = () => {
     zip_code: "",
     phone: ""
   });
+  const [completedOrder, setCompletedOrder] = useState<any>(null);
 
   const cartData = searchParams.get('cart');
   const totalAmount = searchParams.get('total');
@@ -83,12 +127,20 @@ const Checkout = () => {
 
       if (itemsError) throw itemsError;
 
+      const { data: fullOrder, error: fetchError } = await supabase
+        .from('orders')
+        .select('*, order_items(*, products(*))')
+        .eq('id', order.id)
+        .single();
+      
+      if (fetchError) throw fetchError;
+
       toast({
         title: "Order Placed Successfully!",
         description: `Your order #${order.id.slice(0, 8)} has been placed.`
       });
 
-      navigate('/profile?tab=orders');
+      setCompletedOrder(fullOrder);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -101,6 +153,10 @@ const Checkout = () => {
   };
 
   const total = cartItems.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
+  
+  if (completedOrder) {
+    return <OrderConfirmation order={completedOrder} navigate={navigate} />;
+  }
 
   return (
     <div className="min-h-screen bg-white py-16">

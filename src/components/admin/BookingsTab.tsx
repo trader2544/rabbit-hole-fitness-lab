@@ -10,8 +10,10 @@ import { logActivity, sendNotification } from "@/components/activity/ActivityLog
 export default function BookingsTab({ bookings, fetchBookings }) {
   const { toast } = useToast();
 
+  console.log("BookingsTab props", bookings);
+
   const updateBookingStatus = async (bookingId: string, status: string) => {
-    const booking = bookings.find(b => b.id === bookingId);
+    const booking = Array.isArray(bookings) ? bookings.find(b => b.id === bookingId) : null;
     const oldStatus = booking?.status;
 
     const { error } = await supabase
@@ -61,6 +63,16 @@ export default function BookingsTab({ bookings, fetchBookings }) {
     }
   };
 
+  if (!Array.isArray(bookings) || bookings.length === 0) {
+    return (
+      <Card className="border border-gray-200">
+        <CardContent className="p-6 text-center text-gray-500">
+          No bookings found.
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-4">
        <div className="flex justify-end mb-4">
@@ -69,43 +81,35 @@ export default function BookingsTab({ bookings, fetchBookings }) {
           Refresh Bookings
         </Button>
       </div>
-      {bookings.length === 0 ? (
-        <Card className="border border-gray-200">
-          <CardContent className="p-6 text-center text-gray-500">
-            No bookings found.
+      {bookings.map((booking: any) => (
+        <Card key={booking.id || Math.random()} className="border border-gray-200">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="font-semibold">{booking.trainer_name || "?"} - {booking.session_type || "?"}</p>
+                <p className="text-sm text-gray-600">{booking.profiles?.full_name || "?"} ({booking.profiles?.email || "?"})</p>
+                <p className="text-sm text-gray-600">
+                  {booking.session_date ? new Date(booking.session_date).toLocaleDateString() : "?"} at {booking.session_time || "?"}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="font-semibold">${booking.total_cost || "0.00"}</p>
+                <Select defaultValue={booking.status} onValueChange={(value) => updateBookingStatus(booking.id, value)}>
+                  <SelectTrigger className="w-36 rounded-none border-gray-200 mt-2">
+                    <SelectValue placeholder="Update status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="confirmed">Confirmed</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </CardContent>
         </Card>
-      ) : (
-        bookings.map((booking: any) => (
-          <Card key={booking.id} className="border border-gray-200">
-            <CardContent className="p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="font-semibold">{booking.trainer_name} - {booking.session_type}</p>
-                  <p className="text-sm text-gray-600">{booking.profiles?.full_name} ({booking.profiles?.email})</p>
-                  <p className="text-sm text-gray-600">
-                    {new Date(booking.session_date).toLocaleDateString()} at {booking.session_time}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="font-semibold">${booking.total_cost}</p>
-                  <Select defaultValue={booking.status} onValueChange={(value) => updateBookingStatus(booking.id, value)}>
-                    <SelectTrigger className="w-36 rounded-none border-gray-200 mt-2">
-                      <SelectValue placeholder="Update status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="confirmed">Confirmed</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))
-      )}
+      ))}
     </div>
   );
 }

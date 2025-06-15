@@ -42,12 +42,12 @@ serve(async (req) => {
     // Get the origin from request headers or use your domain
     const origin = req.headers.get('origin') || 'https://rabbithole.fitness';
 
-    // Create payment request with IntaSend API - using correct format based on SDK docs
+    // Create payment request with IntaSend API - using CARD-PAYMENT method
     const paymentData = {
       public_key: intasendPublishableKey,
       amount: amount,
       currency: currency,
-      methods: ["M-PESA"], // Using 'methods' (plural) as array based on SDK docs
+      method: "CARD-PAYMENT", // Card payment only as per IntaSend documentation
       api_ref: `order_${orderId}`,
       email: customerInfo.email,
       first_name: customerInfo.first_name,

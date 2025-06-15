@@ -326,7 +326,7 @@ const Checkout = () => {
                         <span className="font-medium">Payment Method</span>
                       </div>
                       <p className="text-sm text-gray-600">
-                        Secure payment processing via IntaSend. Supports mobile money, cards, and bank transfers.
+                        Secure card payment processing via IntaSend. Supports Visa, Mastercard, and other major credit/debit cards.
                       </p>
                     </div>
                     
@@ -335,7 +335,7 @@ const Checkout = () => {
                       className="w-full bg-black text-white hover:bg-gray-800 rounded-none py-6"
                       disabled={loading}
                     >
-                      {loading ? "Processing..." : `Pay with IntaSend - $${total.toFixed(2)}`}
+                      {loading ? "Processing..." : `Pay with Card - $${total.toFixed(2)}`}
                     </Button>
                   </div>
                 </form>

@@ -13,8 +13,7 @@ import ResourcesTab from "@/components/admin/ResourcesTab";
 import SubscriptionsTab from "@/components/admin/SubscriptionsTab";
 import ActivityLogsTab from "@/components/admin/ActivityLogsTab";
 import NotificationsManagement from "@/components/admin/NotificationsManagement";
-import BlogsTab from "@/components/admin/BlogsTab";
-import SchedulesTab from "@/components/admin/SchedulesTab";
+// REMOVE imports of missing BlogsTab and SchedulesTab
 import TableTester from "@/components/database/TableTester";
 
 const Admin = () => {
@@ -25,8 +24,8 @@ const Admin = () => {
   const [users, setUsers] = useState([]);
   const [resources, setResources] = useState([]);
   const [subscriptions, setSubscriptions] = useState([]);
-  const [blogs, setBlogs] = useState([]);
-  const [schedules, setSchedules] = useState([]);
+  // const [blogs, setBlogs] = useState([]); // DEACTIVATED
+  // const [schedules, setSchedules] = useState([]); // DEACTIVATED
 
   const fetchProducts = async () => {
     const { data } = await supabase
@@ -76,21 +75,9 @@ const Admin = () => {
     if (data) setSubscriptions(data);
   };
 
-  const fetchBlogs = async () => {
-    const { data } = await supabase
-      .from('blogs')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (data) setBlogs(data);
-  };
-
-  const fetchSchedules = async () => {
-    const { data } = await supabase
-      .from('admin_schedules')
-      .select('*')
-      .order('date', { ascending: true });
-    if (data) setSchedules(data);
-  };
+  // DEACTIVATED these fetches:
+  // const fetchBlogs = async () => {/* ... */};
+  // const fetchSchedules = async () => {/* ... */};
 
   useEffect(() => {
     if (isAdmin) {
@@ -100,8 +87,8 @@ const Admin = () => {
       fetchUsers();
       fetchResources();
       fetchSubscriptions();
-      fetchBlogs();
-      fetchSchedules();
+      // fetchBlogs();
+      // fetchSchedules();
     }
   }, [isAdmin]);
 
@@ -133,8 +120,8 @@ const Admin = () => {
               <TabsTrigger value="users" className="rounded-none"><Users className="mr-2 h-4 w-4" />Users</TabsTrigger>
               <TabsTrigger value="resources" className="rounded-none"><FileText className="mr-2 h-4 w-4" />Resources</TabsTrigger>
               <TabsTrigger value="subscriptions" className="rounded-none"><Star className="mr-2 h-4 w-4" />Subscriptions</TabsTrigger>
-              <TabsTrigger value="blogs" className="rounded-none"><BookOpen className="mr-2 h-4 w-4" />Blogs</TabsTrigger>
-              <TabsTrigger value="schedules" className="rounded-none"><Calendar className="mr-2 h-4 w-4" />Schedules</TabsTrigger>
+              {/* <TabsTrigger value="blogs" className="rounded-none"><BookOpen className="mr-2 h-4 w-4" />Blogs</TabsTrigger>
+              <TabsTrigger value="schedules" className="rounded-none"><Calendar className="mr-2 h-4 w-4" />Schedules</TabsTrigger> */}
               <TabsTrigger value="activity" className="rounded-none"><Activity className="mr-2 h-4 w-4" />Activity</TabsTrigger>
               <TabsTrigger value="notifications" className="rounded-none"><Bell className="mr-2 h-4 w-4" />Notifications</TabsTrigger>
             </TabsList>
@@ -146,8 +133,8 @@ const Admin = () => {
             <TabsContent value="users"><UsersTab users={users} /></TabsContent>
             <TabsContent value="resources"><ResourcesTab resources={resources} fetchResources={fetchResources} /></TabsContent>
             <TabsContent value="subscriptions"><SubscriptionsTab subscriptions={subscriptions} fetchSubscriptions={fetchSubscriptions} /></TabsContent>
-            <TabsContent value="blogs"><BlogsTab blogs={blogs} fetchBlogs={fetchBlogs} /></TabsContent>
-            <TabsContent value="schedules"><SchedulesTab schedules={schedules} fetchSchedules={fetchSchedules} /></TabsContent>
+            {/* <TabsContent value="blogs"><BlogsTab blogs={blogs} fetchBlogs={fetchBlogs} /></TabsContent>
+            <TabsContent value="schedules"><SchedulesTab schedules={schedules} fetchSchedules={fetchSchedules} /></TabsContent> */}
             <TabsContent value="activity"><ActivityLogsTab /></TabsContent>
             <TabsContent value="notifications"><NotificationsManagement /></TabsContent>
           </Tabs>
@@ -158,3 +145,4 @@ const Admin = () => {
 };
 
 export default Admin;
+

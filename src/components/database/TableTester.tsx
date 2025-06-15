@@ -13,13 +13,36 @@ interface TableTest {
   count?: number;
 }
 
+// These literals match the Supabase types
+const TABLES: { table: 
+  "profiles" | "products" | "orders" | "order_items" | "bookings" | "subscriptions" | "notifications" | "activity_logs" | "resources" | "user_roles" | "blogs" | "admin_schedules" | "schedule_bookings",
+  description: string
+}[] = [
+  { table: "profiles", description: "User Profiles" },
+  { table: "products", description: "Products" },
+  { table: "orders", description: "Orders" },
+  { table: "order_items", description: "Order Items" },
+  { table: "bookings", description: "Bookings" },
+  { table: "subscriptions", description: "Subscriptions" },
+  { table: "notifications", description: "Notifications" },
+  { table: "activity_logs", description: "Activity Logs" },
+  { table: "resources", description: "Resources" },
+  { table: "user_roles", description: "User Roles" },
+  { table: "blogs", description: "Blogs" },
+  { table: "admin_schedules", description: "Admin Schedules" },
+  { table: "schedule_bookings", description: "Schedule Bookings" },
+];
+
 const TableTester = () => {
   const [tests, setTests] = useState<TableTest[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const testTable = async (tableName: string, description: string): Promise<TableTest> => {
+  const testTable = async (
+    tableName: typeof TABLES[number]['table'], 
+    description: string
+  ): Promise<TableTest> => {
     try {
-      const { data, error, count } = await supabase
+      const { error, count } = await supabase
         .from(tableName)
         .select('*', { count: 'exact', head: true });
 
@@ -48,24 +71,9 @@ const TableTester = () => {
 
   const runAllTests = async () => {
     setLoading(true);
-    const tableTests = [
-      { name: 'profiles', description: 'User Profiles' },
-      { name: 'products', description: 'Products' },
-      { name: 'orders', description: 'Orders' },
-      { name: 'order_items', description: 'Order Items' },
-      { name: 'bookings', description: 'Bookings' },
-      { name: 'subscriptions', description: 'Subscriptions' },
-      { name: 'notifications', description: 'Notifications' },
-      { name: 'activity_logs', description: 'Activity Logs' },
-      { name: 'resources', description: 'Resources' },
-      { name: 'user_roles', description: 'User Roles' },
-      { name: 'blogs', description: 'Blogs' },
-      { name: 'admin_schedules', description: 'Admin Schedules' },
-      { name: 'schedule_bookings', description: 'Schedule Bookings' },
-    ];
 
     const results = await Promise.all(
-      tableTests.map(({ name, description }) => testTable(name, description))
+      TABLES.map(({ table, description }) => testTable(table, description))
     );
 
     setTests(results);
@@ -171,3 +179,4 @@ const TableTester = () => {
 };
 
 export default TableTester;
+

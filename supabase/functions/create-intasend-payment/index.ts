@@ -42,12 +42,12 @@ serve(async (req) => {
     // Get the origin from request headers or use your domain
     const origin = req.headers.get('origin') || 'https://rabbithole.fitness';
 
-    // Create payment request with IntaSend - using correct format
+    // Create payment request with IntaSend - updated format based on API docs
     const paymentData = {
       public_key: intasendPublishableKey,
       amount: amount,
       currency: currency,
-      method: "M-PESA", // Changed to single method format as expected by API
+      method: ["M-PESA"], // Array format as per IntaSend docs
       api_ref: `order_${orderId}`,
       email: customerInfo.email,
       first_name: customerInfo.first_name,
@@ -56,6 +56,8 @@ serve(async (req) => {
       redirect_url: `${origin}/checkout?status=success&order_id=${orderId}`,
       webhook_url: `${Deno.env.get('SUPABASE_URL')}/functions/v1/intasend-webhook`,
     };
+
+    console.log('Payment data being sent to IntaSend:', JSON.stringify(paymentData, null, 2));
 
     const response = await fetch('https://payment.intasend.com/api/v1/payment/collection/', {
       method: 'POST',
@@ -66,14 +68,21 @@ serve(async (req) => {
       body: JSON.stringify(paymentData),
     });
 
+    const responseText = await response.text();
+    console.log('IntaSend response status:', response.status);
+    console.log('IntaSend response body:', responseText);
+
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('IntaSend API error:', errorText);
-      throw new Error(`IntaSend API error: ${response.status}`);
+      console.error('IntaSend API error details:', {
+        status: response.status,
+        statusText: response.statusText,
+        body: responseText
+      });
+      throw new Error(`IntaSend API error: ${response.status} - ${responseText}`);
     }
 
-    const result = await response.json();
-    console.log('IntaSend payment created:', result);
+    const result = JSON.parse(responseText);
+    console.log('IntaSend payment created successfully:', result);
 
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

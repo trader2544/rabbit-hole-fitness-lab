@@ -39,18 +39,19 @@ serve(async (req) => {
 
     console.log('Creating IntaSend payment for order:', orderId);
 
-    // Create payment request with IntaSend
+    // Create payment request with IntaSend - using correct format
     const paymentData = {
       public_key: intasendPublishableKey,
       amount: amount,
       currency: currency,
-      method: ['MPESA', 'CARD', 'BANK'], // Add payment methods
+      method: "M-PESA", // Changed to single method format as expected by API
       api_ref: `order_${orderId}`,
       email: customerInfo.email,
       first_name: customerInfo.first_name,
       last_name: customerInfo.last_name,
       phone_number: customerInfo.phone,
       redirect_url: `${req.headers.get('origin')}/checkout?status=success&order_id=${orderId}`,
+      webhook_url: `${Deno.env.get('SUPABASE_URL')}/functions/v1/intasend-webhook`,
     };
 
     const response = await fetch('https://payment.intasend.com/api/v1/payment/collection/', {

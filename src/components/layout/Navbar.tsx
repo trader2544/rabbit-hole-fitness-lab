@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { Menu, X, User, LogOut, Settings } from "lucide-react";
+import { Menu, X, User, LogOut, Settings, Star } from "lucide-react";
 import NotificationCenter from "@/components/notifications/NotificationCenter";
 
 const Navbar = () => {
@@ -24,6 +24,7 @@ const Navbar = () => {
     { name: 'Shop', href: '/shop' },
     { name: 'Resources', href: '/resources' },
     { name: 'Tools', href: '/tools' },
+    { name: 'Blog', href: '/blogs' },
   ];
 
   return (
@@ -64,6 +65,13 @@ const Navbar = () => {
                     >
                       <User className="h-4 w-4 mr-2" />
                       Profile
+                    </Link>
+                    <Link
+                      to="/premium"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      <Star className="h-4 w-4 mr-2" />
+                      Premium Dashboard
                     </Link>
                     {isAdmin && (
                       <Link
@@ -134,6 +142,13 @@ const Navbar = () => {
                     onClick={() => setIsOpen(false)}
                   >
                     Profile
+                  </Link>
+                  <Link
+                    to="/premium"
+                    className="block px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Premium Dashboard
                   </Link>
                   {isAdmin && (
                     <Link

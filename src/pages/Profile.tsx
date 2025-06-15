@@ -12,12 +12,13 @@ import { User, Package, Calendar, CreditCard } from "lucide-react";
 interface Profile {
   full_name: string;
   avatar_url?: string;
+  role: string;
 }
 
 const Profile = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
-  const [profile, setProfile] = useState<Profile>({ full_name: "" });
+  const [profile, setProfile] = useState<Profile>({ full_name: "", role: "user" });
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState([]);
   const [bookings, setBookings] = useState([]);
@@ -189,6 +190,18 @@ const Profile = () => {
                         value={profile.full_name}
                         onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
                         className="rounded-none border-gray-200"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Role
+                      </label>
+                      <Input
+                        type="text"
+                        value={profile.role}
+                        disabled
+                        className="rounded-none border-gray-200 bg-gray-50"
                       />
                     </div>
                     

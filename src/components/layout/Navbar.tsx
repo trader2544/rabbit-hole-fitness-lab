@@ -10,7 +10,8 @@ import {
   LogOut, 
   ShoppingCart,
   Settings,
-  UserCircle 
+  UserCircle,
+  Shield
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -64,6 +65,14 @@ const Navbar = () => {
 
           {/* Desktop Auth */}
           <div className="hidden md:flex items-center space-x-4">
+            {isAdmin && (
+              <Link to="/admin">
+                <Button variant="ghost" size="icon" className="text-blue-600 hover:text-blue-800">
+                  <Shield className="h-5 w-5" />
+                </Button>
+              </Link>
+            )}
+            
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

@@ -156,7 +156,7 @@ const CTA = () => {
                         : 'bg-white text-black border-2 border-gray-200 hover:bg-gray-50'
                     }`}
                   >
-                    {loadingPlan === plan.name ? 'Processing...' : (user ? 'Get Started' : 'Sign Up to Start')}
+                    {loadingPlan === plan.name ? 'Processing...' : (user ? 'Subscribe (mock)' : 'Sign Up to Start')}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </CardContent>

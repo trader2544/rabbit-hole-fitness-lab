@@ -280,7 +280,7 @@ const Checkout = () => {
                       className="w-full bg-black text-white hover:bg-gray-800 rounded-none py-6"
                       disabled={loading}
                     >
-                      {loading ? "Processing..." : `Place Order - $${total.toFixed(2)}`}
+                      {loading ? "Processing..." : `Place Order (mock) - $${total.toFixed(2)}`}
                     </Button>
                   </div>
                 </form>

@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Package, Calendar, Settings, FileText, Star, Activity, Bell } from "lucide-react";
+import { Users, Package, Calendar, Settings, FileText, Star, Activity, Bell, Database, BookOpen } from "lucide-react";
 import ProductsTab from "@/components/admin/ProductsTab";
 import OrdersTab from "@/components/admin/OrdersTab";
 import BookingsTab from "@/components/admin/BookingsTab";
@@ -13,6 +13,9 @@ import ResourcesTab from "@/components/admin/ResourcesTab";
 import SubscriptionsTab from "@/components/admin/SubscriptionsTab";
 import ActivityLogsTab from "@/components/admin/ActivityLogsTab";
 import NotificationsManagement from "@/components/admin/NotificationsManagement";
+import BlogsTab from "@/components/admin/BlogsTab";
+import SchedulesTab from "@/components/admin/SchedulesTab";
+import TableTester from "@/components/database/TableTester";
 
 const Admin = () => {
   const { isAdmin } = useAuth();
@@ -22,6 +25,8 @@ const Admin = () => {
   const [users, setUsers] = useState([]);
   const [resources, setResources] = useState([]);
   const [subscriptions, setSubscriptions] = useState([]);
+  const [blogs, setBlogs] = useState([]);
+  const [schedules, setSchedules] = useState([]);
 
   const fetchProducts = async () => {
     const { data } = await supabase
@@ -71,6 +76,22 @@ const Admin = () => {
     if (data) setSubscriptions(data);
   };
 
+  const fetchBlogs = async () => {
+    const { data } = await supabase
+      .from('blogs')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (data) setBlogs(data);
+  };
+
+  const fetchSchedules = async () => {
+    const { data } = await supabase
+      .from('admin_schedules')
+      .select('*')
+      .order('date', { ascending: true });
+    if (data) setSchedules(data);
+  };
+
   useEffect(() => {
     if (isAdmin) {
       fetchProducts();
@@ -79,6 +100,8 @@ const Admin = () => {
       fetchUsers();
       fetchResources();
       fetchSubscriptions();
+      fetchBlogs();
+      fetchSchedules();
     }
   }, [isAdmin]);
 
@@ -101,24 +124,30 @@ const Admin = () => {
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-light text-gray-900 mb-8">Admin Dashboard</h1>
 
-          <Tabs defaultValue="products" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-8 rounded-none">
+          <Tabs defaultValue="database" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-10 rounded-none">
+              <TabsTrigger value="database" className="rounded-none"><Database className="mr-2 h-4 w-4" />Database</TabsTrigger>
               <TabsTrigger value="products" className="rounded-none"><Package className="mr-2 h-4 w-4" />Products</TabsTrigger>
               <TabsTrigger value="orders" className="rounded-none"><Package className="mr-2 h-4 w-4" />Orders</TabsTrigger>
               <TabsTrigger value="bookings" className="rounded-none"><Calendar className="mr-2 h-4 w-4" />Bookings</TabsTrigger>
               <TabsTrigger value="users" className="rounded-none"><Users className="mr-2 h-4 w-4" />Users</TabsTrigger>
               <TabsTrigger value="resources" className="rounded-none"><FileText className="mr-2 h-4 w-4" />Resources</TabsTrigger>
               <TabsTrigger value="subscriptions" className="rounded-none"><Star className="mr-2 h-4 w-4" />Subscriptions</TabsTrigger>
+              <TabsTrigger value="blogs" className="rounded-none"><BookOpen className="mr-2 h-4 w-4" />Blogs</TabsTrigger>
+              <TabsTrigger value="schedules" className="rounded-none"><Calendar className="mr-2 h-4 w-4" />Schedules</TabsTrigger>
               <TabsTrigger value="activity" className="rounded-none"><Activity className="mr-2 h-4 w-4" />Activity</TabsTrigger>
               <TabsTrigger value="notifications" className="rounded-none"><Bell className="mr-2 h-4 w-4" />Notifications</TabsTrigger>
             </TabsList>
 
+            <TabsContent value="database"><TableTester /></TabsContent>
             <TabsContent value="products"><ProductsTab products={products} fetchProducts={fetchProducts} /></TabsContent>
             <TabsContent value="orders"><OrdersTab orders={orders} fetchOrders={fetchOrders} /></TabsContent>
             <TabsContent value="bookings"><BookingsTab bookings={bookings} fetchBookings={fetchBookings} /></TabsContent>
             <TabsContent value="users"><UsersTab users={users} /></TabsContent>
             <TabsContent value="resources"><ResourcesTab resources={resources} fetchResources={fetchResources} /></TabsContent>
             <TabsContent value="subscriptions"><SubscriptionsTab subscriptions={subscriptions} fetchSubscriptions={fetchSubscriptions} /></TabsContent>
+            <TabsContent value="blogs"><BlogsTab blogs={blogs} fetchBlogs={fetchBlogs} /></TabsContent>
+            <TabsContent value="schedules"><SchedulesTab schedules={schedules} fetchSchedules={fetchSchedules} /></TabsContent>
             <TabsContent value="activity"><ActivityLogsTab /></TabsContent>
             <TabsContent value="notifications"><NotificationsManagement /></TabsContent>
           </Tabs>

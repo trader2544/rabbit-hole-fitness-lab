@@ -38,8 +38,16 @@ const NotificationCenter = () => {
       return;
     }
 
-    setNotifications(data || []);
-    setUnreadCount(data?.filter(n => !n.read).length || 0);
+    // Ensure type safety by casting the type field
+    const typedNotifications = data?.map(notification => ({
+      ...notification,
+      type: ['info', 'success', 'warning', 'error'].includes(notification.type) 
+        ? notification.type as 'info' | 'success' | 'warning' | 'error'
+        : 'info' as const
+    })) || [];
+
+    setNotifications(typedNotifications);
+    setUnreadCount(typedNotifications.filter(n => !n.read).length);
   };
 
   useEffect(() => {

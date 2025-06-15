@@ -14,38 +14,57 @@ interface ActivityLog {
   description: string;
   metadata: any;
   created_at: string;
-  profiles?: {
-    full_name: string;
-    email: string;
-  };
+}
+
+interface UserProfile {
+  id: string;
+  full_name: string | null;
+  email: string;
 }
 
 const ActivityLogsTab = () => {
   const [logs, setLogs] = useState<ActivityLog[]>([]);
+  const [profiles, setProfiles] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
 
   const fetchLogs = async () => {
     setLoading(true);
+    
+    // First fetch activity logs
     let query = supabase
       .from('activity_logs')
-      .select(`
-        *,
-        profiles(full_name, email)
-      `)
+      .select('*')
       .order('created_at', { ascending: false });
 
     if (filter !== 'all') {
       query = query.ilike('activity_type', `%${filter}%`);
     }
 
-    const { data, error } = await query;
+    const { data: logsData, error: logsError } = await query;
 
-    if (error) {
-      console.error('Error fetching activity logs:', error);
-    } else {
-      setLogs(data || []);
+    if (logsError) {
+      console.error('Error fetching activity logs:', logsError);
+      setLoading(false);
+      return;
     }
+
+    // Get unique user IDs from logs
+    const userIds = [...new Set(logsData?.map(log => log.user_id).filter(Boolean) || [])];
+    
+    // Fetch profiles for these users
+    if (userIds.length > 0) {
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, full_name, email')
+        .in('id', userIds);
+
+      if (!profilesError && profilesData) {
+        setProfiles(profilesData);
+      }
+    }
+
+    setLogs(logsData || []);
     setLoading(false);
   };
 
@@ -58,6 +77,10 @@ const ActivityLogsTab = () => {
     if (activityType.includes('order')) return 'bg-green-100 text-green-800';
     if (activityType.includes('subscription')) return 'bg-purple-100 text-purple-800';
     return 'bg-gray-100 text-gray-800';
+  };
+
+  const getUserProfile = (userId: string) => {
+    return profiles.find(profile => profile.id === userId);
   };
 
   return (
@@ -84,39 +107,42 @@ const ActivityLogsTab = () => {
       </div>
 
       <div className="space-y-3">
-        {logs.map((log) => (
-          <Card key={log.id} className="border border-gray-200">
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Badge className={getActivityBadge(log.activity_type)}>
-                      {log.activity_type.replace('_', ' ').toUpperCase()}
-                    </Badge>
-                    <span className="text-sm text-gray-500">
-                      {new Date(log.created_at).toLocaleString()}
-                    </span>
+        {logs.map((log) => {
+          const userProfile = getUserProfile(log.user_id);
+          return (
+            <Card key={log.id} className="border border-gray-200">
+              <CardContent className="p-4">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge className={getActivityBadge(log.activity_type)}>
+                        {log.activity_type.replace('_', ' ').toUpperCase()}
+                      </Badge>
+                      <span className="text-sm text-gray-500">
+                        {new Date(log.created_at).toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="font-medium">{log.description}</p>
+                    <p className="text-sm text-gray-600">
+                      User: {userProfile?.full_name || 'Unknown'} ({userProfile?.email || 'No email'})
+                    </p>
+                    {log.metadata && (
+                      <details className="mt-2">
+                        <summary className="text-sm text-gray-500 cursor-pointer">
+                          <Eye className="inline h-3 w-3 mr-1" />
+                          View Details
+                        </summary>
+                        <pre className="text-xs bg-gray-50 p-2 mt-1 rounded overflow-auto">
+                          {JSON.stringify(log.metadata, null, 2)}
+                        </pre>
+                      </details>
+                    )}
                   </div>
-                  <p className="font-medium">{log.description}</p>
-                  <p className="text-sm text-gray-600">
-                    User: {log.profiles?.full_name || 'Unknown'} ({log.profiles?.email || 'No email'})
-                  </p>
-                  {log.metadata && (
-                    <details className="mt-2">
-                      <summary className="text-sm text-gray-500 cursor-pointer">
-                        <Eye className="inline h-3 w-3 mr-1" />
-                        View Details
-                      </summary>
-                      <pre className="text-xs bg-gray-50 p-2 mt-1 rounded overflow-auto">
-                        {JSON.stringify(log.metadata, null, 2)}
-                      </pre>
-                    </details>
-                  )}
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          );
+        })}
 
         {logs.length === 0 && !loading && (
           <Card className="border border-gray-200">

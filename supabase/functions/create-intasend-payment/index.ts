@@ -1,4 +1,5 @@
 
+
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -42,12 +43,12 @@ serve(async (req) => {
     // Get the origin from request headers or use your domain
     const origin = req.headers.get('origin') || 'https://rabbithole.fitness';
 
-    // Create payment request with IntaSend - updated format based on API docs
+    // Create payment request with IntaSend - using correct method format
     const paymentData = {
       public_key: intasendPublishableKey,
       amount: amount,
       currency: currency,
-      method: ["M-PESA"], // Array format as per IntaSend docs
+      method: "M-PESA", // Single string format as per IntaSend API
       api_ref: `order_${orderId}`,
       email: customerInfo.email,
       first_name: customerInfo.first_name,
@@ -99,3 +100,4 @@ serve(async (req) => {
     );
   }
 });
+

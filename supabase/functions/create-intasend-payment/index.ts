@@ -44,6 +44,7 @@ serve(async (req) => {
       public_key: intasendPublishableKey,
       amount: amount,
       currency: currency,
+      method: ['MPESA', 'CARD', 'BANK'], // Add payment methods
       api_ref: `order_${orderId}`,
       email: customerInfo.email,
       first_name: customerInfo.first_name,

@@ -99,6 +99,11 @@ export type Database = {
       orders: {
         Row: {
           created_at: string | null
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          delivery_address: Json | null
+          delivery_notes: string | null
           id: string
           shipping_address: Json | null
           status: string | null
@@ -108,6 +113,11 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          delivery_address?: Json | null
+          delivery_notes?: string | null
           id?: string
           shipping_address?: Json | null
           status?: string | null
@@ -117,6 +127,11 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          delivery_address?: Json | null
+          delivery_notes?: string | null
           id?: string
           shipping_address?: Json | null
           status?: string | null
@@ -198,6 +213,39 @@ export type Database = {
           id?: string
           role?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      resources: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          file_type: string
+          file_url: string
+          id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          file_type: string
+          file_url: string
+          id?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          file_type?: string
+          file_url?: string
+          id?: string
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }

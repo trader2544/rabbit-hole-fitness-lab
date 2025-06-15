@@ -5,11 +5,15 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
+import { logActivity, sendNotification } from "@/components/activity/ActivityLogger";
 
 export default function BookingsTab({ bookings, fetchBookings }) {
   const { toast } = useToast();
 
   const updateBookingStatus = async (bookingId: string, status: string) => {
+    const booking = bookings.find(b => b.id === bookingId);
+    const oldStatus = booking?.status;
+
     const { error } = await supabase
       .from('bookings')
       .update({ status })
@@ -26,6 +30,33 @@ export default function BookingsTab({ bookings, fetchBookings }) {
         title: "Success",
         description: "Booking status updated!"
       });
+
+      // Log activity
+      if (booking) {
+        await logActivity(
+          booking.user_id,
+          'booking_status_updated',
+          `Booking status changed from ${oldStatus} to ${status}`,
+          { booking_id: bookingId, old_status: oldStatus, new_status: status }
+        );
+
+        // Send notification to user
+        const statusMessages = {
+          confirmed: 'Your booking has been confirmed!',
+          completed: 'Your session has been marked as completed.',
+          cancelled: 'Your booking has been cancelled.'
+        };
+
+        if (statusMessages[status]) {
+          await sendNotification(
+            booking.user_id,
+            'Booking Update',
+            statusMessages[status],
+            status === 'cancelled' ? 'warning' : 'success'
+          );
+        }
+      }
+
       fetchBookings();
     }
   };

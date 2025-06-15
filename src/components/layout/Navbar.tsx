@@ -2,215 +2,170 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { 
-  Menu, 
-  X, 
-  User, 
-  LogOut, 
-  ShoppingCart,
-  Settings,
-  UserCircle,
-  Shield
-} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
+import { Menu, X, User, LogOut, Settings } from "lucide-react";
+import NotificationCenter from "@/components/notifications/NotificationCenter";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, signOut, isAdmin } = useAuth();
   const navigate = useNavigate();
 
-  const navItems = [
-    { name: "Education", href: "/education" },
-    { name: "Tools", href: "/tools" },
-    { name: "Trainers", href: "/trainers" },
-    { name: "Resources", href: "/resources" },
-    { name: "Shop", href: "/shop" },
-  ];
-
   const handleSignOut = async () => {
     await signOut();
-    navigate("/");
+    navigate('/');
   };
 
+  const navigation = [
+    { name: 'Home', href: '/' },
+    { name: 'Trainers', href: '/trainers' },
+    { name: 'Fitness', href: '/fitness' },
+    { name: 'Nutrition', href: '/nutrition' },
+    { name: 'Shop', href: '/shop' },
+    { name: 'Resources', href: '/resources' },
+    { name: 'Tools', href: '/tools' },
+  ];
+
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-black rounded-none"></div>
-            <span className="text-xl font-light text-gray-900">FitnessPro</span>
+        <div className="flex justify-between items-center h-16">
+          <Link to="/" className="text-xl font-semibold text-gray-900">
+            FitnessPro
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
+            {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
-                className="text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium"
+                className="text-gray-600 hover:text-gray-900 transition-colors"
               >
                 {item.name}
               </Link>
             ))}
           </div>
 
-          {/* Desktop Auth */}
+          {/* User Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            {isAdmin && (
-              <Link to="/admin">
-                <Button variant="ghost" size="icon" className="text-blue-600 hover:text-blue-800">
-                  <Shield className="h-5 w-5" />
-                </Button>
-              </Link>
-            )}
-            
             {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <UserCircle className="h-6 w-6" />
+              <>
+                <NotificationCenter />
+                <div className="relative group">
+                  <Button variant="outline" size="sm" className="border-gray-200">
+                    <User className="h-4 w-4 mr-2" />
+                    {user.email?.split('@')[0]}
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end">
-                  <div className="flex items-center justify-start gap-2 p-2">
-                    <div className="flex flex-col space-y-1 leading-none">
-                      <p className="font-medium">{user.email}</p>
-                    </div>
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                    <Link
+                      to="/profile"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      <User className="h-4 w-4 mr-2" />
+                      Profile
+                    </Link>
+                    {isAdmin && (
+                      <Link
+                        to="/admin"
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      >
+                        <Settings className="h-4 w-4 mr-2" />
+                        Admin
+                      </Link>
+                    )}
+                    <button
+                      onClick={handleSignOut}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign out
+                    </button>
                   </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate("/profile")}>
-                    <User className="mr-2 h-4 w-4" />
-                    Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/shop")}>
-                    <ShoppingCart className="mr-2 h-4 w-4" />
-                    Shop
-                  </DropdownMenuItem>
-                  {isAdmin && (
-                    <DropdownMenuItem onClick={() => navigate("/admin")}>
-                      <Settings className="mr-2 h-4 w-4" />
-                      Admin
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                </div>
+              </>
             ) : (
-              <Button 
-                onClick={() => navigate("/auth")}
-                className="bg-black text-white hover:bg-gray-800 rounded-none"
-              >
-                Sign In
-              </Button>
+              <div className="flex items-center space-x-2">
+                <Link to="/auth">
+                  <Button variant="outline" size="sm" className="border-gray-200 text-gray-700 hover:bg-gray-50">
+                    Sign In
+                  </Button>
+                </Link>
+              </div>
             )}
           </div>
 
           {/* Mobile menu button */}
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-6 w-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-              <div className="flex flex-col space-y-4 mt-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-lg font-semibold">Menu</span>
-                </div>
-                
-                {navItems.map((item) => (
+          <div className="md:hidden">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        {isOpen && (
+          <div className="md:hidden border-t border-gray-200 py-4">
+            <div className="space-y-2">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className="block px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
+              
+              {user ? (
+                <>
+                  <div className="px-4 py-2 flex items-center justify-between">
+                    <span className="text-sm text-gray-500">Notifications</span>
+                    <NotificationCenter />
+                  </div>
                   <Link
-                    key={item.name}
-                    to={item.href}
-                    className="text-gray-600 hover:text-gray-900 transition-colors py-2 text-base"
+                    to="/profile"
+                    className="block px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                     onClick={() => setIsOpen(false)}
                   >
-                    {item.name}
+                    Profile
                   </Link>
-                ))}
-                
-                <div className="pt-4 border-t border-gray-200">
-                  {user ? (
-                    <div className="space-y-2">
-                      <div className="text-sm text-gray-600 mb-4">
-                        Signed in as {user.email}
-                      </div>
-                      <Button 
-                        variant="ghost" 
-                        className="w-full justify-start"
-                        onClick={() => {
-                          navigate("/profile");
-                          setIsOpen(false);
-                        }}
-                      >
-                        <User className="mr-2 h-4 w-4" />
-                        Profile
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        className="w-full justify-start"
-                        onClick={() => {
-                          navigate("/shop");
-                          setIsOpen(false);
-                        }}
-                      >
-                        <ShoppingCart className="mr-2 h-4 w-4" />
-                        Shop
-                      </Button>
-                      {isAdmin && (
-                        <Button 
-                          variant="ghost" 
-                          className="w-full justify-start"
-                          onClick={() => {
-                            navigate("/admin");
-                            setIsOpen(false);
-                          }}
-                        >
-                          <Settings className="mr-2 h-4 w-4" />
-                          Admin
-                        </Button>
-                      )}
-                      <Button 
-                        variant="ghost" 
-                        className="w-full justify-start text-red-600"
-                        onClick={() => {
-                          handleSignOut();
-                          setIsOpen(false);
-                        }}
-                      >
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Sign Out
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button 
-                      onClick={() => {
-                        navigate("/auth");
-                        setIsOpen(false);
-                      }}
-                      className="w-full bg-black text-white hover:bg-gray-800 rounded-none"
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      className="block px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                      onClick={() => setIsOpen(false)}
                     >
-                      Sign In
-                    </Button>
+                      Admin
+                    </Link>
                   )}
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
+                  <button
+                    onClick={() => {
+                      handleSignOut();
+                      setIsOpen(false);
+                    }}
+                    className="block w-full text-left px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  >
+                    Sign out
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/auth"
+                  className="block px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Sign In
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );

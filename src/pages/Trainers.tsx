@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { Star, MapPin, Clock, DollarSign, Users, Award, Calendar, MessageSquare,
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { logActivity, sendNotification } from "@/components/activity/ActivityLogger";
 
 const trainers = [
   {
@@ -106,6 +106,22 @@ const Trainers = () => {
       });
 
       if (error) throw error;
+
+      // Log activity
+      await logActivity(
+        user.id,
+        'booking_created',
+        `Booked session with ${trainer.name}`,
+        { trainer_name: trainer.name, session_type: 'Online Session', cost: trainer.hourlyRate }
+      );
+
+      // Send notification to user
+      await sendNotification(
+        user.id,
+        'Booking Confirmed',
+        `Your session with ${trainer.name} has been booked successfully for ${sessionDate.toLocaleDateString()}.`,
+        'success'
+      );
 
       toast({
         title: "Booking Successful!",

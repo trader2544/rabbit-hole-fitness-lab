@@ -10,166 +10,171 @@ import ExerciseChat from "@/components/tools/ExerciseChat";
 
 const Tools = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center bg-gray-100 rounded-full px-4 py-2 text-sm text-gray-600 mb-8">
-              <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
-              Advanced Fitness Tools
+      <section className="py-12 md:py-16 bg-white border-b border-gray-100">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="inline-flex items-center bg-gray-50 rounded-full px-3 py-1 text-sm text-gray-600 mb-6 border border-gray-200">
+              <span className="w-2 h-2 bg-black rounded-full mr-2"></span>
+              Fitness Tools
             </div>
             
-            <h1 className="text-4xl md:text-5xl font-light mb-6 text-gray-900 leading-tight">
-              Precision Tools for
-              <br />
-              <span className="font-semibold">Peak Performance</span>
+            <h1 className="text-3xl md:text-4xl font-semibold mb-4 text-gray-900 leading-tight">
+              Advanced Fitness Tools
             </h1>
             
-            <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-              Advanced calculators and AI-powered assistance to optimize your fitness journey with data-driven insights.
+            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+              Precision calculators and AI-powered assistance to optimize your fitness journey with data-driven insights.
             </p>
           </div>
         </div>
       </section>
 
       {/* Tools Section */}
-      <section className="pb-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <Tabs defaultValue="calculators" className="space-y-8">
-              <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto rounded-none">
-                <TabsTrigger value="calculators" className="rounded-none">
-                  <Calculator className="mr-2 h-4 w-4" />
-                  Calculators
-                </TabsTrigger>
-                <TabsTrigger value="chat" className="rounded-none">
-                  <MessageCircle className="mr-2 h-4 w-4" />
-                  AI Assistant
-                </TabsTrigger>
-              </TabsList>
+      <section className="py-12">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <Tabs defaultValue="calculators" className="space-y-8">
+            <TabsList className="grid w-full grid-cols-2 max-w-sm mx-auto bg-white border border-gray-200 p-1">
+              <TabsTrigger value="calculators" className="data-[state=active]:bg-black data-[state=active]:text-white">
+                <Calculator className="mr-2 h-4 w-4" />
+                Calculators
+              </TabsTrigger>
+              <TabsTrigger value="chat" className="data-[state=active]:bg-black data-[state=active]:text-white">
+                <MessageCircle className="mr-2 h-4 w-4" />
+                AI Assistant
+              </TabsTrigger>
+            </TabsList>
 
-              <TabsContent value="calculators">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <Card className="border border-gray-200">
-                    <CardHeader>
-                      <CardTitle className="font-light flex items-center">
-                        <Target className="mr-2 h-5 w-5 text-gray-400" />
-                        BMI Calculator
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <BMICalculator />
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border border-gray-200">
-                    <CardHeader>
-                      <CardTitle className="font-light flex items-center">
-                        <Zap className="mr-2 h-5 w-5 text-gray-400" />
-                        Calorie Calculator
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <CalorieCalculator />
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Additional Tools Preview */}
-                <div className="mt-12">
-                  <h3 className="text-2xl font-light text-gray-900 mb-8 text-center">
-                    Coming Soon
-                  </h3>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card className="border border-gray-200 opacity-75">
-                      <CardContent className="p-6 text-center">
-                        <TrendingUp className="h-8 w-8 text-gray-400 mx-auto mb-4" />
-                        <h4 className="font-semibold text-gray-900 mb-2">Progress Tracker</h4>
-                        <p className="text-sm text-gray-600">
-                          Advanced analytics for your fitness journey
-                        </p>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="border border-gray-200 opacity-75">
-                      <CardContent className="p-6 text-center">
-                        <Clock className="h-8 w-8 text-gray-400 mx-auto mb-4" />
-                        <h4 className="font-semibold text-gray-900 mb-2">Workout Timer</h4>
-                        <p className="text-sm text-gray-600">
-                          Precision timing for interval training
-                        </p>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="border border-gray-200 opacity-75">
-                      <CardContent className="p-6 text-center">
-                        <Target className="h-8 w-8 text-gray-400 mx-auto mb-4" />
-                        <h4 className="font-semibold text-gray-900 mb-2">Goal Planner</h4>
-                        <p className="text-sm text-gray-600">
-                          Strategic planning for your fitness goals
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="chat">
-                <Card className="border border-gray-200">
-                  <CardHeader>
-                    <CardTitle className="font-light flex items-center">
-                      <MessageCircle className="mr-2 h-5 w-5 text-gray-400" />
-                      AI Fitness Assistant
+            <TabsContent value="calculators">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card className="border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-xl font-semibold flex items-center text-gray-900">
+                      <Target className="mr-3 h-5 w-5 text-gray-600" />
+                      BMI Calculator
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <ExerciseChat />
+                    <BMICalculator />
                   </CardContent>
                 </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
+
+                <Card className="border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-xl font-semibold flex items-center text-gray-900">
+                      <Zap className="mr-3 h-5 w-5 text-gray-600" />
+                      Calorie Calculator
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CalorieCalculator />
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Coming Soon Section */}
+              <div className="mt-16">
+                <div className="text-center mb-8">
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+                    Coming Soon
+                  </h3>
+                  <p className="text-gray-600">More advanced tools to enhance your fitness journey</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card className="border border-gray-200 bg-white/50 shadow-sm">
+                    <CardContent className="p-6 text-center">
+                      <div className="w-12 h-12 bg-gray-100 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                        <TrendingUp className="h-6 w-6 text-gray-500" />
+                      </div>
+                      <h4 className="font-semibold text-gray-900 mb-2">Progress Tracker</h4>
+                      <p className="text-sm text-gray-600 leading-relaxed">
+                        Advanced analytics for your fitness journey
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border border-gray-200 bg-white/50 shadow-sm">
+                    <CardContent className="p-6 text-center">
+                      <div className="w-12 h-12 bg-gray-100 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                        <Clock className="h-6 w-6 text-gray-500" />
+                      </div>
+                      <h4 className="font-semibold text-gray-900 mb-2">Workout Timer</h4>
+                      <p className="text-sm text-gray-600 leading-relaxed">
+                        Precision timing for interval training
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border border-gray-200 bg-white/50 shadow-sm">
+                    <CardContent className="p-6 text-center">
+                      <div className="w-12 h-12 bg-gray-100 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                        <Target className="h-6 w-6 text-gray-500" />
+                      </div>
+                      <h4 className="font-semibold text-gray-900 mb-2">Goal Planner</h4>
+                      <p className="text-sm text-gray-600 leading-relaxed">
+                        Strategic planning for your fitness goals
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="chat">
+              <Card className="border border-gray-200 bg-white shadow-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-xl font-semibold flex items-center text-gray-900">
+                    <MessageCircle className="mr-3 h-5 w-5 text-gray-600" />
+                    AI Fitness Assistant
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ExerciseChat />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
+      <section className="py-16 bg-white border-t border-gray-100">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="max-w-4xl mx-auto text-center">
-            <h3 className="text-2xl font-light text-gray-900 mb-12">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-12">
               Why Our Tools Stand Out
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div>
-                <div className="w-12 h-12 bg-black rounded-none mx-auto mb-4 flex items-center justify-center">
-                  <Zap className="h-6 w-6 text-white" />
+              <div className="text-center">
+                <div className="w-14 h-14 bg-black rounded-lg mx-auto mb-6 flex items-center justify-center">
+                  <Zap className="h-7 w-7 text-white" />
                 </div>
-                <h4 className="font-semibold text-gray-900 mb-2">Instant Results</h4>
-                <p className="text-sm text-gray-600">
-                  Get immediate, accurate calculations and insights
+                <h4 className="font-semibold text-gray-900 mb-3 text-lg">Instant Results</h4>
+                <p className="text-gray-600 leading-relaxed">
+                  Get immediate, accurate calculations and insights for your fitness goals
                 </p>
               </div>
               
-              <div>
-                <div className="w-12 h-12 bg-black rounded-none mx-auto mb-4 flex items-center justify-center">
-                  <Target className="h-6 w-6 text-white" />
+              <div className="text-center">
+                <div className="w-14 h-14 bg-black rounded-lg mx-auto mb-6 flex items-center justify-center">
+                  <Target className="h-7 w-7 text-white" />
                 </div>
-                <h4 className="font-semibold text-gray-900 mb-2">Precision Focused</h4>
-                <p className="text-sm text-gray-600">
-                  Science-based algorithms for maximum accuracy
+                <h4 className="font-semibold text-gray-900 mb-3 text-lg">Precision Focused</h4>
+                <p className="text-gray-600 leading-relaxed">
+                  Science-based algorithms designed for maximum accuracy and reliability
                 </p>
               </div>
               
-              <div>
-                <div className="w-12 h-12 bg-black rounded-none mx-auto mb-4 flex items-center justify-center">
-                  <MessageCircle className="h-6 w-6 text-white" />
+              <div className="text-center">
+                <div className="w-14 h-14 bg-black rounded-lg mx-auto mb-6 flex items-center justify-center">
+                  <MessageCircle className="h-7 w-7 text-white" />
                 </div>
-                <h4 className="font-semibold text-gray-900 mb-2">AI-Powered</h4>
-                <p className="text-sm text-gray-600">
-                  Advanced AI assistance for personalized guidance
+                <h4 className="font-semibold text-gray-900 mb-3 text-lg">AI-Powered</h4>
+                <p className="text-gray-600 leading-relaxed">
+                  Advanced AI assistance providing personalized guidance and recommendations
                 </p>
               </div>
             </div>

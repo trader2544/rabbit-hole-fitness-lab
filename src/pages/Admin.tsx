@@ -110,7 +110,7 @@ const Admin = () => {
 
             <TabsContent value="products"><ProductsTab products={products} fetchProducts={fetchProducts} /></TabsContent>
             <TabsContent value="orders"><OrdersTab orders={orders} fetchOrders={fetchOrders} /></TabsContent>
-            <TabsContent value="bookings"><BookingsTab bookings={bookings} /></TabsContent>
+            <TabsContent value="bookings"><BookingsTab bookings={bookings} fetchBookings={fetchBookings} /></TabsContent>
             <TabsContent value="users"><UsersTab users={users} /></TabsContent>
             <TabsContent value="resources"><ResourcesTab resources={resources} fetchResources={fetchResources} /></TabsContent>
             <TabsContent value="subscriptions"><SubscriptionsTab subscriptions={subscriptions} fetchSubscriptions={fetchSubscriptions} /></TabsContent>

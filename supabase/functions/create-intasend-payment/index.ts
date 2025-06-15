@@ -42,12 +42,12 @@ serve(async (req) => {
     // Get the origin from request headers or use your domain
     const origin = req.headers.get('origin') || 'https://rabbithole.fitness';
 
-    // Create payment request with IntaSend API - using CARD-PAYMENT method
+    // Prepare payload for IntaSend Hosted Checkout API
     const paymentData = {
       public_key: intasendPublishableKey,
       amount: amount,
       currency: currency,
-      method: "CARD-PAYMENT", // Card payment only as per IntaSend documentation
+      method: "CARD-PAYMENT",
       api_ref: `order_${orderId}`,
       email: customerInfo.email,
       first_name: customerInfo.first_name,
@@ -59,7 +59,7 @@ serve(async (req) => {
 
     console.log('Payment data being sent to IntaSend:', JSON.stringify(paymentData, null, 2));
 
-    const response = await fetch('https://payment.intasend.com/api/v1/payment/collection/', {
+    const response = await fetch('https://payment.intasend.com/api/v1/checkout/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -84,9 +84,15 @@ serve(async (req) => {
     const result = JSON.parse(responseText);
     console.log('IntaSend payment created successfully:', result);
 
-    return new Response(JSON.stringify(result), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    // IntaSend returns "url" or "redirect_url" (depending on their API version)
+    // We'll preserve "url" as the return param for frontend compatibility
+    return new Response(
+      JSON.stringify({
+        url: result.url || result.redirect_url // handle both field names
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
 
   } catch (error) {
     console.error('Error creating IntaSend payment:', error);

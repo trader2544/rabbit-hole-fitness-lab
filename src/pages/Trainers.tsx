@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, MapPin, Clock, DollarSign, Users, Award, Calendar, MessageSquare, ArrowRight } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const trainers = [
   {
@@ -69,6 +72,9 @@ const Trainers = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [selectedTrainer, setSelectedTrainer] = useState(null);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isBooking, setIsBooking] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -77,6 +83,45 @@ const Trainers = () => {
       setSelectedTrainer(trainer);
     }
   }, [id]);
+
+  const handleBookSession = async (trainer: any) => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    setIsBooking(true);
+    try {
+      const sessionDate = new Date();
+      sessionDate.setDate(sessionDate.getDate() + 3);
+
+      const { error } = await supabase.from('bookings').insert({
+        user_id: user.id,
+        trainer_name: trainer.name,
+        session_type: 'Online Session',
+        session_date: sessionDate.toISOString().split('T')[0],
+        session_time: '10:00:00',
+        duration: 60,
+        total_cost: trainer.hourlyRate,
+        status: 'confirmed'
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Booking Successful!",
+        description: `You've booked a session with ${trainer.name}. You can see your bookings in your profile.`,
+      });
+      navigate('/profile?tab=bookings');
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to book session.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsBooking(false);
+    }
+  };
 
   if (selectedTrainer) {
     return (
@@ -134,9 +179,13 @@ const Trainers = () => {
                     </div>
                     
                     <div className="space-y-3 mb-6">
-                      <Button className="w-full bg-black text-white hover:bg-gray-800 rounded-none py-3">
+                      <Button
+                        onClick={() => handleBookSession(selectedTrainer)}
+                        disabled={isBooking}
+                        className="w-full bg-black text-white hover:bg-gray-800 rounded-none py-3"
+                      >
                         <Calendar className="mr-2 h-4 w-4" />
-                        Book Session
+                        {isBooking ? 'Booking...' : 'Book Session (mock)'}
                       </Button>
                       <Button variant="outline" className="w-full border-gray-200 text-gray-700 hover:bg-gray-50 rounded-none py-3">
                         <MessageSquare className="mr-2 h-4 w-4" />

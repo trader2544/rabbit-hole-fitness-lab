@@ -1,15 +1,15 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Package, Calendar, Settings, FileText } from "lucide-react";
+import { Users, Package, Calendar, Settings, FileText, Star } from "lucide-react";
 import ProductsTab from "@/components/admin/ProductsTab";
 import OrdersTab from "@/components/admin/OrdersTab";
 import BookingsTab from "@/components/admin/BookingsTab";
 import UsersTab from "@/components/admin/UsersTab";
 import ResourcesTab from "@/components/admin/ResourcesTab";
+import SubscriptionsTab from "@/components/admin/SubscriptionsTab";
 
 const Admin = () => {
   const { isAdmin } = useAuth();
@@ -18,6 +18,7 @@ const Admin = () => {
   const [bookings, setBookings] = useState([]);
   const [users, setUsers] = useState([]);
   const [resources, setResources] = useState([]);
+  const [subscriptions, setSubscriptions] = useState([]);
 
   const fetchProducts = async () => {
     const { data } = await supabase
@@ -59,6 +60,14 @@ const Admin = () => {
     if (data) setResources(data);
   };
 
+  const fetchSubscriptions = async () => {
+    const { data } = await supabase
+      .from('subscriptions')
+      .select(`*, profiles(full_name, email)`)
+      .order('created_at', { ascending: false });
+    if (data) setSubscriptions(data);
+  };
+
   useEffect(() => {
     if (isAdmin) {
       fetchProducts();
@@ -66,6 +75,7 @@ const Admin = () => {
       fetchBookings();
       fetchUsers();
       fetchResources();
+      fetchSubscriptions();
     }
   }, [isAdmin]);
 
@@ -89,12 +99,13 @@ const Admin = () => {
           <h1 className="text-3xl font-light text-gray-900 mb-8">Admin Dashboard</h1>
 
           <Tabs defaultValue="products" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5 rounded-none">
+            <TabsList className="grid w-full grid-cols-6 rounded-none">
               <TabsTrigger value="products" className="rounded-none"><Package className="mr-2 h-4 w-4" />Products</TabsTrigger>
               <TabsTrigger value="orders" className="rounded-none"><Package className="mr-2 h-4 w-4" />Orders</TabsTrigger>
               <TabsTrigger value="bookings" className="rounded-none"><Calendar className="mr-2 h-4 w-4" />Bookings</TabsTrigger>
               <TabsTrigger value="users" className="rounded-none"><Users className="mr-2 h-4 w-4" />Users</TabsTrigger>
               <TabsTrigger value="resources" className="rounded-none"><FileText className="mr-2 h-4 w-4" />Resources</TabsTrigger>
+              <TabsTrigger value="subscriptions" className="rounded-none"><Star className="mr-2 h-4 w-4" />Subscriptions</TabsTrigger>
             </TabsList>
 
             <TabsContent value="products"><ProductsTab products={products} fetchProducts={fetchProducts} /></TabsContent>
@@ -102,6 +113,7 @@ const Admin = () => {
             <TabsContent value="bookings"><BookingsTab bookings={bookings} /></TabsContent>
             <TabsContent value="users"><UsersTab users={users} /></TabsContent>
             <TabsContent value="resources"><ResourcesTab resources={resources} fetchResources={fetchResources} /></TabsContent>
+            <TabsContent value="subscriptions"><SubscriptionsTab subscriptions={subscriptions} fetchSubscriptions={fetchSubscriptions} /></TabsContent>
           </Tabs>
         </div>
       </div>

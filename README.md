@@ -1,73 +1,87 @@
-# Welcome to your Lovable project
+# Rabbit Hole Fitness Lab
 
-## Project info
+**Rabbit Hole Fitness Lab** is an interactive web platform for exploring the science of fitness, calisthenics, and nutrition. We offer evidence-based resources, progressive training programs, and educational tools for athletes, coaches, and fitness enthusiasts of all levels.
 
-**URL**: https://lovable.dev/projects/ec03c14e-643e-44aa-8f90-eb1116ef0cde
+---
 
-## How can I edit this code?
+## 🚀 Features
 
-There are several ways of editing your application.
+- **Comprehensive Fitness Science:**  
+  Dive into the principles of strength training, biomechanics, and program design, including content tailored for women's training.
 
-**Use Lovable**
+- **Calisthenics & Strength Progressions:**  
+  Stepwise movement progressions, advanced skill tutorials, and practical programming tips.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/ec03c14e-643e-44aa-8f90-eb1116ef0cde) and start prompting.
+- **Nutrition & Recovery Resources:**  
+  Meal prep guides, macro calculators, supplement safety, recovery protocols, and sleep optimization guides.
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Interactive Tools:**  
+  Workout and progress tracking templates, customizable routines, and downloadable guides.
 
-**Use your preferred IDE**
+- **Premium Courses:**  
+  Advanced modules in exercise physiology, calisthenics mastery, nutrition science, and more.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
+## 🛠️ Tech Stack
 
 - Vite
 - TypeScript
 - React
 - shadcn-ui
 - Tailwind CSS
+- Supabase (authentication, database, and storage)
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/ec03c14e-643e-44aa-8f90-eb1116ef0cde) and click on Share -> Publish.
+## 🏁 Getting Started
 
-## Can I connect a custom domain to my Lovable project?
+1. **Clone the repository:**
+   ```sh
+   git clone <YOUR_GIT_URL>
+   cd rabbit-hole-fitness-lab
+   ```
 
-Yes, you can!
+2. **Install dependencies:**
+   ```sh
+   npm install
+   ```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+3. **Run the development server:**
+   ```sh
+   npm run dev
+   ```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+---
+
+## 🔬 Example Resources
+
+- Beginner's Training Templates (PDF)
+- Macro Calculator Spreadsheet (Excel)
+- Exercise Form Video Library
+- Recovery Protocol Checklist (PDF)
+- Home Workout Routines
+- Meal Prep & Supplement Guides
+- Sleep & Mobility Protocols
+
+---
+
+## 📦 Deployment
+
+To deploy, use your preferred static hosting or serverless platform. Ensure proper configuration of environment variables and Supabase backend.
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome! Please open an issue first to discuss any major changes.
+
+---
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for details.
+
+---
+
+**Explore the science. Train smarter. Go deeper.**

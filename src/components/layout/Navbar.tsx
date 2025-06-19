@@ -19,8 +19,7 @@ const Navbar = () => {
   const navigation = [
     { name: 'Home', href: '/' },
     { name: 'Trainers', href: '/trainers' },
-    { name: 'Fitness', href: '/fitness' },
-    { name: 'Nutrition', href: '/nutrition' },
+    { name: 'Education', href: '/education' },
     { name: 'Shop', href: '/shop' },
     { name: 'Resources', href: '/resources' },
     { name: 'Tools', href: '/tools' },
@@ -31,7 +30,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="text-xl font-semibold text-gray-900">
-            FitnessPro
+            rabbithole
           </Link>
 
           {/* Desktop Navigation */}

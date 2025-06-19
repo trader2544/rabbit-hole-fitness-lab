@@ -135,11 +135,13 @@ const TrainersManagement = () => {
     });
   };
 
+  const isFormDisabled = Boolean(isAdding || isEditing);
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-semibold">Trainers Management</h2>
-        <Button onClick={handleAddNew} disabled={isAdding || isEditing}>
+        <Button onClick={handleAddNew} disabled={isFormDisabled}>
           <Plus className="h-4 w-4 mr-2" />
           Add Trainer
         </Button>
@@ -273,7 +275,7 @@ const TrainersManagement = () => {
                         variant="outline"
                         size="sm"
                         onClick={() => handleEdit(trainer)}
-                        disabled={isEditing || isAdding}
+                        disabled={isFormDisabled}
                       >
                         <Edit2 className="h-4 w-4" />
                       </Button>
@@ -281,7 +283,7 @@ const TrainersManagement = () => {
                         variant="destructive"
                         size="sm"
                         onClick={() => handleDelete(trainer.id)}
-                        disabled={isEditing || isAdding}
+                        disabled={isFormDisabled}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

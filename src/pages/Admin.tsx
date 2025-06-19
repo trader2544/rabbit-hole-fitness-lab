@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,9 +13,11 @@ import SubscriptionsTab from "@/components/admin/SubscriptionsTab";
 import ActivityLogsTab from "@/components/admin/ActivityLogsTab";
 import NotificationsManagement from "@/components/admin/NotificationsManagement";
 import TrainersManagement from "@/components/admin/TrainersManagement";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Admin = () => {
   const { isAdmin } = useAuth();
+  const isMobile = useIsMobile();
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [bookings, setBookings] = useState([]);
@@ -87,9 +88,9 @@ const Admin = () => {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <Card className="border border-gray-200">
-          <CardContent className="p-8 text-center">
-            <Settings className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">Access denied. Admin privileges required.</p>
+          <CardContent className={`${isMobile ? 'p-4' : 'p-8'} text-center`}>
+            <Settings className={`${isMobile ? 'h-8 w-8' : 'h-12 w-12'} text-gray-400 mx-auto mb-4`} />
+            <p className={`text-gray-600 ${isMobile ? 'text-sm' : ''}`}>Access denied. Admin privileges required.</p>
           </CardContent>
         </Card>
       </div>
@@ -100,19 +101,32 @@ const Admin = () => {
     <div className="min-h-screen bg-white py-16">
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-light text-gray-900 mb-8">Admin Dashboard</h1>
+          <h1 className={`${isMobile ? 'text-xl' : 'text-3xl'} font-light text-gray-900 ${isMobile ? 'mb-4' : 'mb-8'}`}>Admin Dashboard</h1>
 
-          <Tabs defaultValue="trainers" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-9 rounded-none">
-              <TabsTrigger value="trainers" className="rounded-none"><TrainerIcon className="mr-2 h-4 w-4" />Trainers</TabsTrigger>
-              <TabsTrigger value="products" className="rounded-none"><Package className="mr-2 h-4 w-4" />Products</TabsTrigger>
-              <TabsTrigger value="orders" className="rounded-none"><Package className="mr-2 h-4 w-4" />Orders</TabsTrigger>
-              <TabsTrigger value="bookings" className="rounded-none"><Calendar className="mr-2 h-4 w-4" />Bookings</TabsTrigger>
-              <TabsTrigger value="users" className="rounded-none"><Users className="mr-2 h-4 w-4" />Users</TabsTrigger>
-              <TabsTrigger value="resources" className="rounded-none"><FileText className="mr-2 h-4 w-4" />Resources</TabsTrigger>
-              <TabsTrigger value="subscriptions" className="rounded-none"><Star className="mr-2 h-4 w-4" />Subscriptions</TabsTrigger>
-              <TabsTrigger value="activity" className="rounded-none"><Activity className="mr-2 h-4 w-4" />Activity</TabsTrigger>
-              <TabsTrigger value="notifications" className="rounded-none"><Bell className="mr-2 h-4 w-4" />Notifications</TabsTrigger>
+          <Tabs defaultValue="trainers" className={`${isMobile ? 'space-y-3' : 'space-y-6'}`}>
+            <TabsList className={`grid w-full ${isMobile ? 'grid-cols-3' : 'grid-cols-9'} rounded-none ${isMobile ? 'h-auto' : ''}`}>
+              <TabsTrigger value="trainers" className={`rounded-none ${isMobile ? 'text-xs px-1 py-2' : ''}`}>
+                <TrainerIcon className={`${isMobile ? 'mr-1 h-3 w-3' : 'mr-2 h-4 w-4'}`} />
+                {!isMobile && "Trainers"}
+              </TabsTrigger>
+              <TabsTrigger value="products" className={`rounded-none ${isMobile ? 'text-xs px-1 py-2' : ''}`}>
+                <Package className={`${isMobile ? 'mr-1 h-3 w-3' : 'mr-2 h-4 w-4'}`} />
+                {!isMobile && "Products"}
+              </TabsTrigger>
+              <TabsTrigger value="orders" className={`rounded-none ${isMobile ? 'text-xs px-1 py-2' : ''}`}>
+                <Package className={`${isMobile ? 'mr-1 h-3 w-3' : 'mr-2 h-4 w-4'}`} />
+                {!isMobile && "Orders"}
+              </TabsTrigger>
+              {!isMobile && (
+                <>
+                  <TabsTrigger value="bookings" className="rounded-none"><Calendar className="mr-2 h-4 w-4" />Bookings</TabsTrigger>
+                  <TabsTrigger value="users" className="rounded-none"><Users className="mr-2 h-4 w-4" />Users</TabsTrigger>
+                  <TabsTrigger value="resources" className="rounded-none"><FileText className="mr-2 h-4 w-4" />Resources</TabsTrigger>
+                  <TabsTrigger value="subscriptions" className="rounded-none"><Star className="mr-2 h-4 w-4" />Subscriptions</TabsTrigger>
+                  <TabsTrigger value="activity" className="rounded-none"><Activity className="mr-2 h-4 w-4" />Activity</TabsTrigger>
+                  <TabsTrigger value="notifications" className="rounded-none"><Bell className="mr-2 h-4 w-4" />Notifications</TabsTrigger>
+                </>
+              )}
             </TabsList>
 
             <TabsContent value="trainers"><TrainersManagement /></TabsContent>

@@ -1,10 +1,10 @@
-
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Book, Award, Users, Star, Crown, Check, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const premiumPlans = [
   {
@@ -90,6 +90,7 @@ const premiumCourses = [
 
 const Resources = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -98,70 +99,70 @@ const Resources = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="py-16 md:py-24 bg-white">
+      <section className={`${isMobile ? 'py-8' : 'py-16 md:py-24'} bg-white`}>
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center bg-gray-100 rounded-full px-4 py-2 text-sm text-gray-600 mb-8">
+            <div className={`inline-flex items-center bg-gray-100 rounded-full ${isMobile ? 'px-2 py-1 text-xs' : 'px-4 py-2 text-sm'} text-gray-600 ${isMobile ? 'mb-4' : 'mb-8'}`}>
               <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
               Premium Learning Platform
             </div>
             
-            <h1 className="text-4xl md:text-5xl font-light mb-6 text-gray-900 leading-tight">
+            <h1 className={`${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-light ${isMobile ? 'mb-3' : 'mb-6'} text-gray-900 leading-tight`}>
               Accelerate Your
               <br />
               <span className="font-semibold">Fitness Education</span>
             </h1>
             
-            <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-              Access comprehensive courses, expert guidance, and proven methodologies to master every aspect of fitness and performance.
+            <p className={`${isMobile ? 'text-sm' : 'text-lg md:text-xl'} text-gray-600 ${isMobile ? 'mb-6' : 'mb-12'} max-w-2xl mx-auto leading-relaxed`}>
+              {isMobile ? 'Comprehensive courses & expert guidance' : 'Access comprehensive courses, expert guidance, and proven methodologies to master every aspect of fitness and performance.'}
             </p>
           </div>
         </div>
       </section>
 
       {/* Premium Plans */}
-      <section className="pb-16">
+      <section className={`${isMobile ? 'pb-8' : 'pb-16'}`}>
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-4">
+            <div className={`text-center ${isMobile ? 'mb-6' : 'mb-12'}`}>
+              <h2 className={`${isMobile ? 'text-lg' : 'text-2xl md:text-3xl'} font-light text-gray-900 ${isMobile ? 'mb-2' : 'mb-4'}`}>
                 Choose Your Learning Path
               </h2>
-              <p className="text-lg text-gray-600">
-                Flexible plans designed to match your commitment level and goals
+              <p className={`${isMobile ? 'text-sm' : 'text-lg'} text-gray-600`}>
+                {isMobile ? 'Flexible plans for your goals' : 'Flexible plans designed to match your commitment level and goals'}
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className={`grid grid-cols-1 ${isMobile ? 'gap-3' : 'md:grid-cols-3 gap-6'}`}>
               {premiumPlans.map((plan, index) => (
                 <Card key={index} className={`relative border-2 ${plan.popular ? 'border-black' : 'border-gray-200'} hover:shadow-lg transition-shadow`}>
                   {plan.popular && (
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                      <Badge className="bg-black text-white rounded-full px-4 py-1">Most Popular</Badge>
+                      <Badge className={`bg-black text-white rounded-full ${isMobile ? 'px-2 py-1 text-xs' : 'px-4 py-1'}`}>Most Popular</Badge>
                     </div>
                   )}
                   
-                  <CardHeader className="text-center pb-4">
-                    <CardTitle className="text-xl font-light">{plan.name}</CardTitle>
-                    <div className="py-4">
-                      <span className="text-3xl font-light">${plan.price}</span>
-                      <span className="text-gray-500">/month</span>
+                  <CardHeader className={`text-center ${isMobile ? 'pb-2 p-3' : 'pb-4'}`}>
+                    <CardTitle className={`${isMobile ? 'text-lg' : 'text-xl'} font-light`}>{plan.name}</CardTitle>
+                    <div className={`${isMobile ? 'py-2' : 'py-4'}`}>
+                      <span className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-light`}>${plan.price}</span>
+                      <span className={`text-gray-500 ${isMobile ? 'text-sm' : ''}`}>/month</span>
                     </div>
-                    <CardDescription className="text-sm">{plan.description}</CardDescription>
+                    <CardDescription className={`${isMobile ? 'text-xs' : 'text-sm'}`}>{plan.description}</CardDescription>
                   </CardHeader>
                   
-                  <CardContent className="space-y-3">
+                  <CardContent className={`${isMobile ? 'space-y-2 px-3' : 'space-y-3'}`}>
                     {plan.features.map((feature, idx) => (
                       <div key={idx} className="flex items-start">
-                        <Check className="h-4 w-4 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-gray-600">{feature}</span>
+                        <Check className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-green-500 mr-2 mt-0.5 flex-shrink-0`} />
+                        <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-600`}>{feature}</span>
                       </div>
                     ))}
                   </CardContent>
                   
-                  <CardFooter>
+                  <CardFooter className={`${isMobile ? 'px-3 pb-3' : ''}`}>
                     <Button 
-                      className={`w-full rounded-none ${plan.popular ? 'bg-black text-white hover:bg-gray-800' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}
+                      className={`w-full rounded-none ${isMobile ? 'text-xs h-8' : ''} ${plan.popular ? 'bg-black text-white hover:bg-gray-800' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}
                     >
                       Start {plan.name}
                     </Button>
@@ -174,22 +175,22 @@ const Resources = () => {
       </section>
 
       {/* Premium Courses */}
-      <section className="py-16 bg-gray-50">
+      <section className={`${isMobile ? 'py-8' : 'py-16'} bg-gray-50`}>
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-4">
+            <div className={`text-center ${isMobile ? 'mb-6' : 'mb-12'}`}>
+              <h2 className={`${isMobile ? 'text-lg' : 'text-2xl md:text-3xl'} font-light text-gray-900 ${isMobile ? 'mb-2' : 'mb-4'}`}>
                 Featured Courses
               </h2>
-              <p className="text-lg text-gray-600">
-                In-depth educational content from industry-leading experts
+              <p className={`${isMobile ? 'text-sm' : 'text-lg'} text-gray-600`}>
+                {isMobile ? 'Educational content from experts' : 'In-depth educational content from industry-leading experts'}
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className={`grid grid-cols-1 ${isMobile ? 'gap-3' : 'md:grid-cols-2 lg:grid-cols-4 gap-6'}`}>
               {premiumCourses.map((course, index) => (
                 <Card key={index} className="border border-gray-200 hover:shadow-md transition-shadow">
-                  <div className="aspect-[4/3] overflow-hidden">
+                  <div className={`${isMobile ? 'aspect-[4/3]' : 'aspect-[4/3]'} overflow-hidden`}>
                     <img 
                       src={course.image} 
                       alt={course.title}
@@ -197,18 +198,18 @@ const Resources = () => {
                     />
                   </div>
                   
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <Badge variant="outline" className="text-xs rounded-none">{course.level}</Badge>
-                      <span className="text-xs text-gray-500">{course.duration}</span>
+                  <CardHeader className={`${isMobile ? 'pb-2 p-3' : 'pb-3'}`}>
+                    <div className={`flex items-center justify-between ${isMobile ? 'mb-1' : 'mb-2'}`}>
+                      <Badge variant="outline" className={`${isMobile ? 'text-xs' : 'text-xs'} rounded-none`}>{course.level}</Badge>
+                      <span className={`${isMobile ? 'text-xs' : 'text-xs'} text-gray-500`}>{course.duration}</span>
                     </div>
-                    <CardTitle className="text-base font-semibold leading-tight">{course.title}</CardTitle>
+                    <CardTitle className={`${isMobile ? 'text-sm' : 'text-base'} font-semibold leading-tight`}>{course.title}</CardTitle>
                   </CardHeader>
                   
-                  <CardContent className="pt-0">
-                    <p className="text-sm text-gray-600 mb-3">{course.description}</p>
-                    <div className="flex items-center text-xs text-gray-500">
-                      <Book className="h-3 w-3 mr-1" />
+                  <CardContent className={`pt-0 ${isMobile ? 'px-3' : ''}`}>
+                    <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-600 ${isMobile ? 'mb-2' : 'mb-3'}`}>{course.description}</p>
+                    <div className={`flex items-center ${isMobile ? 'text-xs' : 'text-xs'} text-gray-500`}>
+                      <Book className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3'} mr-1`} />
                       {course.modules} modules
                     </div>
                   </CardContent>
@@ -220,42 +221,42 @@ const Resources = () => {
       </section>
 
       {/* Value Proposition */}
-      <section className="py-16">
+      <section className={`${isMobile ? 'py-8' : 'py-16'}`}>
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="bg-gray-50 p-8">
-              <Crown className="h-12 w-12 text-gray-400 mx-auto mb-6" />
-              <h2 className="text-2xl font-light text-gray-900 mb-4">
+            <div className={`bg-gray-50 ${isMobile ? 'p-4' : 'p-8'}`}>
+              <Crown className={`${isMobile ? 'h-8 w-8' : 'h-12 w-12'} text-gray-400 mx-auto ${isMobile ? 'mb-3' : 'mb-6'}`} />
+              <h2 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-light text-gray-900 ${isMobile ? 'mb-2' : 'mb-4'}`}>
                 Join the Elite Community
               </h2>
-              <p className="text-lg text-gray-600 mb-8">
-                Access exclusive content, connect with like-minded individuals, and accelerate your fitness journey with expert guidance.
+              <p className={`${isMobile ? 'text-sm' : 'text-lg'} text-gray-600 ${isMobile ? 'mb-4' : 'mb-8'}`}>
+                {isMobile ? 'Expert guidance & community support' : 'Access exclusive content, connect with like-minded individuals, and accelerate your fitness journey with expert guidance.'}
               </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className={`grid grid-cols-1 ${isMobile ? 'gap-3 mb-4' : 'md:grid-cols-3 gap-6 mb-8'}`}>
                 <div className="text-center">
-                  <Star className="h-6 w-6 text-gray-400 mx-auto mb-3" />
-                  <h4 className="font-semibold text-gray-900 mb-2">Expert Instruction</h4>
-                  <p className="text-sm text-gray-600">Learn from certified professionals</p>
+                  <Star className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6'} text-gray-400 mx-auto ${isMobile ? 'mb-2' : 'mb-3'}`} />
+                  <h4 className={`font-semibold text-gray-900 ${isMobile ? 'mb-1 text-sm' : 'mb-2'}`}>Expert Instruction</h4>
+                  <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-600`}>Learn from certified professionals</p>
                 </div>
                 <div className="text-center">
-                  <Users className="h-6 w-6 text-gray-400 mx-auto mb-3" />
-                  <h4 className="font-semibold text-gray-900 mb-2">Community Support</h4>
-                  <p className="text-sm text-gray-600">Connect with thousands of members</p>
+                  <Users className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6'} text-gray-400 mx-auto ${isMobile ? 'mb-2' : 'mb-3'}`} />
+                  <h4 className={`font-semibold text-gray-900 ${isMobile ? 'mb-1 text-sm' : 'mb-2'}`}>Community Support</h4>
+                  <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-600`}>Connect with thousands of members</p>
                 </div>
                 <div className="text-center">
-                  <Award className="h-6 w-6 text-gray-400 mx-auto mb-3" />
-                  <h4 className="font-semibold text-gray-900 mb-2">Proven Results</h4>
-                  <p className="text-sm text-gray-600">Evidence-based methodologies</p>
+                  <Award className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6'} text-gray-400 mx-auto ${isMobile ? 'mb-2' : 'mb-3'}`} />
+                  <h4 className={`font-semibold text-gray-900 ${isMobile ? 'mb-1 text-sm' : 'mb-2'}`}>Proven Results</h4>
+                  <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-600`}>Evidence-based methodologies</p>
                 </div>
               </div>
               
               <Button 
                 onClick={() => navigate("/education")}
-                className="bg-black text-white hover:bg-gray-800 rounded-none px-8 py-3"
+                className={`bg-black text-white hover:bg-gray-800 rounded-none ${isMobile ? 'px-4 py-2 text-sm' : 'px-8 py-3'}`}
               >
                 Start Learning Today
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <ArrowRight className={`ml-2 ${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
               </Button>
             </div>
           </div>

@@ -23,12 +23,12 @@ const Tools = () => {
               Fitness Tools
             </div>
             
-            <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl md:text-4xl'} font-semibold ${isMobile ? 'mb-2' : 'mb-4'} text-gray-900 leading-tight`}>
+            <h1 className={`${isMobile ? 'text-xl' : 'text-3xl md:text-4xl'} font-semibold ${isMobile ? 'mb-2' : 'mb-4'} text-gray-900 leading-tight`}>
               Advanced Fitness Tools
             </h1>
             
             <p className={`${isMobile ? 'text-sm' : 'text-lg'} text-gray-600 ${isMobile ? 'mb-4' : 'mb-8'} max-w-2xl mx-auto leading-relaxed`}>
-              Precision calculators and AI-powered assistance to optimize your fitness journey with data-driven insights.
+              {isMobile ? 'Calculators & AI assistance for optimal results' : 'Precision calculators and AI-powered assistance to optimize your fitness journey with data-driven insights.'}
             </p>
           </div>
         </div>
@@ -51,26 +51,26 @@ const Tools = () => {
 
             <TabsContent value="calculators">
               <div className={`grid grid-cols-1 ${isMobile ? 'gap-3' : 'lg:grid-cols-2 gap-6'}`}>
-                <Card className="border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow">
-                  <CardHeader className={`${isMobile ? 'pb-2' : 'pb-4'}`}>
-                    <CardTitle className={`${isMobile ? 'text-lg' : 'text-xl'} font-semibold flex items-center text-gray-900`}>
+                <Card className={`border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow ${isMobile ? 'rounded-lg' : ''}`}>
+                  <CardHeader className={`${isMobile ? 'pb-2 p-3' : 'pb-4'}`}>
+                    <CardTitle className={`${isMobile ? 'text-base' : 'text-xl'} font-semibold flex items-center text-gray-900`}>
                       <Target className={`${isMobile ? 'mr-2 h-4 w-4' : 'mr-3 h-5 w-5'} text-gray-600`} />
                       BMI Calculator
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className={`${isMobile ? 'px-3 pb-3' : ''}`}>
                     <BMICalculator />
                   </CardContent>
                 </Card>
 
-                <Card className="border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow">
-                  <CardHeader className={`${isMobile ? 'pb-2' : 'pb-4'}`}>
-                    <CardTitle className={`${isMobile ? 'text-lg' : 'text-xl'} font-semibold flex items-center text-gray-900`}>
+                <Card className={`border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow ${isMobile ? 'rounded-lg' : ''}`}>
+                  <CardHeader className={`${isMobile ? 'pb-2 p-3' : 'pb-4'}`}>
+                    <CardTitle className={`${isMobile ? 'text-base' : 'text-xl'} font-semibold flex items-center text-gray-900`}>
                       <Zap className={`${isMobile ? 'mr-2 h-4 w-4' : 'mr-3 h-5 w-5'} text-gray-600`} />
                       Calorie Calculator
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className={`${isMobile ? 'px-3 pb-3' : ''}`}>
                     <CalorieCalculator />
                   </CardContent>
                 </Card>
@@ -86,38 +86,38 @@ const Tools = () => {
                 </div>
                 
                 <div className={`grid grid-cols-1 ${isMobile ? 'gap-3' : 'md:grid-cols-3 gap-6'}`}>
-                  <Card className="border border-gray-200 bg-white/50 shadow-sm">
-                    <CardContent className={`${isMobile ? 'p-4' : 'p-6'} text-center`}>
-                      <div className={`${isMobile ? 'w-8 h-8' : 'w-12 h-12'} bg-gray-100 rounded-lg mx-auto ${isMobile ? 'mb-2' : 'mb-4'} flex items-center justify-center`}>
-                        <TrendingUp className={`${isMobile ? 'h-4 w-4' : 'h-6 w-6'} text-gray-500`} />
+                  <Card className={`border border-gray-200 bg-white/50 shadow-sm ${isMobile ? 'rounded-lg' : ''}`}>
+                    <CardContent className={`${isMobile ? 'p-3' : 'p-6'} text-center`}>
+                      <div className={`${isMobile ? 'w-6 h-6' : 'w-12 h-12'} bg-gray-100 rounded-lg mx-auto ${isMobile ? 'mb-2' : 'mb-4'} flex items-center justify-center`}>
+                        <TrendingUp className={`${isMobile ? 'h-3 w-3' : 'h-6 w-6'} text-gray-500`} />
                       </div>
-                      <h4 className={`font-semibold text-gray-900 ${isMobile ? 'mb-1 text-sm' : 'mb-2'}`}>Progress Tracker</h4>
+                      <h4 className={`font-semibold text-gray-900 ${isMobile ? 'mb-1 text-xs' : 'mb-2'}`}>Progress Tracker</h4>
                       <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-600 leading-relaxed`}>
-                        Advanced analytics for your fitness journey
+                        {isMobile ? 'Analytics for your journey' : 'Advanced analytics for your fitness journey'}
                       </p>
                     </CardContent>
                   </Card>
 
-                  <Card className="border border-gray-200 bg-white/50 shadow-sm">
-                    <CardContent className={`${isMobile ? 'p-4' : 'p-6'} text-center`}>
-                      <div className={`${isMobile ? 'w-8 h-8' : 'w-12 h-12'} bg-gray-100 rounded-lg mx-auto ${isMobile ? 'mb-2' : 'mb-4'} flex items-center justify-center`}>
-                        <Clock className={`${isMobile ? 'h-4 w-4' : 'h-6 w-6'} text-gray-500`} />
+                  <Card className={`border border-gray-200 bg-white/50 shadow-sm ${isMobile ? 'rounded-lg' : ''}`}>
+                    <CardContent className={`${isMobile ? 'p-3' : 'p-6'} text-center`}>
+                      <div className={`${isMobile ? 'w-6 h-6' : 'w-12 h-12'} bg-gray-100 rounded-lg mx-auto ${isMobile ? 'mb-2' : 'mb-4'} flex items-center justify-center`}>
+                        <Clock className={`${isMobile ? 'h-3 w-3' : 'h-6 w-6'} text-gray-500`} />
                       </div>
-                      <h4 className={`font-semibold text-gray-900 ${isMobile ? 'mb-1 text-sm' : 'mb-2'}`}>Workout Timer</h4>
+                      <h4 className={`font-semibold text-gray-900 ${isMobile ? 'mb-1 text-xs' : 'mb-2'}`}>Workout Timer</h4>
                       <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-600 leading-relaxed`}>
-                        Precision timing for interval training
+                        {isMobile ? 'Timing for intervals' : 'Precision timing for interval training'}
                       </p>
                     </CardContent>
                   </Card>
 
-                  <Card className="border border-gray-200 bg-white/50 shadow-sm">
-                    <CardContent className={`${isMobile ? 'p-4' : 'p-6'} text-center`}>
-                      <div className={`${isMobile ? 'w-8 h-8' : 'w-12 h-12'} bg-gray-100 rounded-lg mx-auto ${isMobile ? 'mb-2' : 'mb-4'} flex items-center justify-center`}>
-                        <Target className={`${isMobile ? 'h-4 w-4' : 'h-6 w-6'} text-gray-500`} />
+                  <Card className={`border border-gray-200 bg-white/50 shadow-sm ${isMobile ? 'rounded-lg' : ''}`}>
+                    <CardContent className={`${isMobile ? 'p-3' : 'p-6'} text-center`}>
+                      <div className={`${isMobile ? 'w-6 h-6' : 'w-12 h-12'} bg-gray-100 rounded-lg mx-auto ${isMobile ? 'mb-2' : 'mb-4'} flex items-center justify-center`}>
+                        <Target className={`${isMobile ? 'h-3 w-3' : 'h-6 w-6'} text-gray-500`} />
                       </div>
-                      <h4 className={`font-semibold text-gray-900 ${isMobile ? 'mb-1 text-sm' : 'mb-2'}`}>Goal Planner</h4>
+                      <h4 className={`font-semibold text-gray-900 ${isMobile ? 'mb-1 text-xs' : 'mb-2'}`}>Goal Planner</h4>
                       <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-600 leading-relaxed`}>
-                        Strategic planning for your fitness goals
+                        {isMobile ? 'Planning for goals' : 'Strategic planning for your fitness goals'}
                       </p>
                     </CardContent>
                   </Card>
@@ -126,14 +126,14 @@ const Tools = () => {
             </TabsContent>
 
             <TabsContent value="chat">
-              <Card className="border border-gray-200 bg-white shadow-sm">
-                <CardHeader className={`${isMobile ? 'pb-2' : 'pb-4'}`}>
-                  <CardTitle className={`${isMobile ? 'text-lg' : 'text-xl'} font-semibold flex items-center text-gray-900`}>
+              <Card className={`border border-gray-200 bg-white shadow-sm ${isMobile ? 'rounded-lg' : ''}`}>
+                <CardHeader className={`${isMobile ? 'pb-2 p-3' : 'pb-4'}`}>
+                  <CardTitle className={`${isMobile ? 'text-base' : 'text-xl'} font-semibold flex items-center text-gray-900`}>
                     <MessageCircle className={`${isMobile ? 'mr-2 h-4 w-4' : 'mr-3 h-5 w-5'} text-gray-600`} />
                     AI Fitness Assistant
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className={`${isMobile ? 'px-3 pb-3' : ''}`}>
                   <ExerciseChat />
                 </CardContent>
               </Card>
@@ -152,32 +152,32 @@ const Tools = () => {
             
             <div className={`grid grid-cols-1 ${isMobile ? 'gap-4' : 'md:grid-cols-3 gap-8'}`}>
               <div className="text-center">
-                <div className={`${isMobile ? 'w-10 h-10' : 'w-14 h-14'} bg-black rounded-lg mx-auto ${isMobile ? 'mb-3' : 'mb-6'} flex items-center justify-center`}>
-                  <Zap className={`${isMobile ? 'h-5 w-5' : 'h-7 w-7'} text-white`} />
+                <div className={`${isMobile ? 'w-8 h-8' : 'w-14 h-14'} bg-black rounded-lg mx-auto ${isMobile ? 'mb-3' : 'mb-6'} flex items-center justify-center`}>
+                  <Zap className={`${isMobile ? 'h-4 w-4' : 'h-7 w-7'} text-white`} />
                 </div>
                 <h4 className={`font-semibold text-gray-900 ${isMobile ? 'mb-2 text-sm' : 'mb-3 text-lg'}`}>Instant Results</h4>
                 <p className={`text-gray-600 leading-relaxed ${isMobile ? 'text-xs' : ''}`}>
-                  Get immediate, accurate calculations and insights for your fitness goals
+                  {isMobile ? 'Immediate accurate calculations' : 'Get immediate, accurate calculations and insights for your fitness goals'}
                 </p>
               </div>
               
               <div className="text-center">
-                <div className={`${isMobile ? 'w-10 h-10' : 'w-14 h-14'} bg-black rounded-lg mx-auto ${isMobile ? 'mb-3' : 'mb-6'} flex items-center justify-center`}>
-                  <Target className={`${isMobile ? 'h-5 w-5' : 'h-7 w-7'} text-white`} />
+                <div className={`${isMobile ? 'w-8 h-8' : 'w-14 h-14'} bg-black rounded-lg mx-auto ${isMobile ? 'mb-3' : 'mb-6'} flex items-center justify-center`}>
+                  <Target className={`${isMobile ? 'h-4 w-4' : 'h-7 w-7'} text-white`} />
                 </div>
                 <h4 className={`font-semibold text-gray-900 ${isMobile ? 'mb-2 text-sm' : 'mb-3 text-lg'}`}>Precision Focused</h4>
                 <p className={`text-gray-600 leading-relaxed ${isMobile ? 'text-xs' : ''}`}>
-                  Science-based algorithms designed for maximum accuracy and reliability
+                  {isMobile ? 'Science-based algorithms' : 'Science-based algorithms designed for maximum accuracy and reliability'}
                 </p>
               </div>
               
               <div className="text-center">
-                <div className={`${isMobile ? 'w-10 h-10' : 'w-14 h-14'} bg-black rounded-lg mx-auto ${isMobile ? 'mb-3' : 'mb-6'} flex items-center justify-center`}>
-                  <MessageCircle className={`${isMobile ? 'h-5 w-5' : 'h-7 w-7'} text-white`} />
+                <div className={`${isMobile ? 'w-8 h-8' : 'w-14 h-14'} bg-black rounded-lg mx-auto ${isMobile ? 'mb-3' : 'mb-6'} flex items-center justify-center`}>
+                  <MessageCircle className={`${isMobile ? 'h-4 w-4' : 'h-7 w-7'} text-white`} />
                 </div>
                 <h4 className={`font-semibold text-gray-900 ${isMobile ? 'mb-2 text-sm' : 'mb-3 text-lg'}`}>AI-Powered</h4>
                 <p className={`text-gray-600 leading-relaxed ${isMobile ? 'text-xs' : ''}`}>
-                  Advanced AI assistance providing personalized guidance and recommendations
+                  {isMobile ? 'Personalized AI guidance' : 'Advanced AI assistance providing personalized guidance and recommendations'}
                 </p>
               </div>
             </div>

@@ -33,34 +33,34 @@ const ContentPreview = () => {
   ];
 
   return (
-    <section className={`py-12 md:py-24 bg-gray-50`}>
+    <section className={`${isMobile ? 'py-6' : 'py-12 md:py-24'} bg-gray-50`}>
       <div className="container mx-auto px-4">
-        <div className={`text-center max-w-3xl mx-auto ${isMobile ? 'mb-8' : 'mb-16'}`}>
-          <h2 className={`${isMobile ? 'text-2xl' : 'text-4xl'} font-light text-gray-900 ${isMobile ? 'mb-3' : 'mb-6'}`}>
+        <div className={`text-center max-w-3xl mx-auto ${isMobile ? 'mb-4' : 'mb-8 md:mb-16'}`}>
+          <h2 className={`${isMobile ? 'text-lg' : 'text-2xl md:text-4xl'} font-light text-gray-900 ${isMobile ? 'mb-2' : 'mb-3 md:mb-6'}`}>
             Educational Excellence
           </h2>
-          <p className={`${isMobile ? 'text-sm' : 'text-lg'} text-gray-600`}>
+          <p className={`${isMobile ? 'text-xs' : 'text-sm md:text-lg'} text-gray-600`}>
             Deep-dive into the science and methodology behind elite performance
           </p>
         </div>
 
-        <div className={`grid grid-cols-1 ${isMobile ? 'gap-4' : 'lg:grid-cols-3 gap-8'} max-w-7xl mx-auto ${isMobile ? 'mb-6' : 'mb-12'}`}>
+        <div className={`grid ${isMobile ? 'grid-cols-2 gap-2' : 'grid-cols-1 lg:grid-cols-3 gap-8'} max-w-7xl mx-auto ${isMobile ? 'mb-4' : 'mb-6 md:mb-12'}`}>
           {contentSections.map((section, index) => (
             <div key={index} className="bg-white group cursor-pointer" onClick={() => navigate(section.link)}>
-              <div className={`${isMobile ? 'aspect-[3/2]' : 'aspect-[4/3]'} overflow-hidden`}>
+              <div className={`${isMobile ? 'aspect-[4/3]' : 'aspect-[4/3]'} overflow-hidden`}>
                 <img 
                   src={section.image} 
                   alt={section.title} 
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
-              <div className={`${isMobile ? 'p-4' : 'p-8'}`}>
-                <div className={`text-xs text-gray-500 ${isMobile ? 'mb-2' : 'mb-3'} uppercase tracking-wide`}>{section.category}</div>
-                <h3 className={`${isMobile ? 'text-base' : 'text-xl'} font-semibold ${isMobile ? 'mb-2' : 'mb-3'} text-gray-900`}>{section.title}</h3>
-                <p className={`text-gray-600 ${isMobile ? 'mb-3 text-sm' : 'mb-6'}`}>{section.description}</p>
-                <div className={`flex items-center ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 group-hover:text-black`}>
-                  <span className="mr-2">Learn More</span>
-                  <ArrowRight className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} group-hover:translate-x-1 transition-transform`} />
+              <div className={`${isMobile ? 'p-2' : 'p-4 md:p-8'}`}>
+                <div className={`${isMobile ? 'text-xs' : 'text-xs'} text-gray-500 ${isMobile ? 'mb-1' : 'mb-2 md:mb-3'} uppercase tracking-wide`}>{section.category}</div>
+                <h3 className={`${isMobile ? 'text-sm' : 'text-base md:text-xl'} font-semibold ${isMobile ? 'mb-1' : 'mb-2 md:mb-3'} text-gray-900`}>{section.title}</h3>
+                <p className={`text-gray-600 ${isMobile ? 'mb-2 text-xs' : 'text-sm md:text-base mb-3 md:mb-6'}`}>{section.description}</p>
+                <div className={`flex items-center ${isMobile ? 'text-xs' : 'text-xs md:text-sm'} text-gray-900 group-hover:text-black`}>
+                  <span className="mr-1">Learn More</span>
+                  <ArrowRight className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3 md:h-4 md:w-4'} group-hover:translate-x-1 transition-transform`} />
                 </div>
               </div>
             </div>
@@ -70,9 +70,9 @@ const ContentPreview = () => {
         <div className="text-center">
           <Button 
             variant="outline" 
-            size={isMobile ? "default" : "lg"}
+            size={isMobile ? "sm" : "default"}
             onClick={() => navigate("/resources")}
-            className={`border-2 border-gray-300 text-gray-700 hover:border-black hover:text-black rounded-none ${isMobile ? 'px-6 py-2 text-sm' : 'px-8 py-6'}`}
+            className={`border-2 border-gray-300 text-gray-700 hover:border-black hover:text-black rounded-none ${isMobile ? 'px-4 py-1 text-xs' : 'px-6 py-2 text-sm md:px-8 md:py-6'}`}
           >
             View All Resources
           </Button>

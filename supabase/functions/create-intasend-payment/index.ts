@@ -94,10 +94,10 @@ serve(async (req) => {
       }
     );
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating IntaSend payment:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error?.message || 'Payment creation failed' }),
       { 
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -8,7 +8,7 @@ export const logActivity = async (
   metadata?: any
 ) => {
   try {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('activity_logs')
       .insert({
         user_id: userId,
@@ -32,7 +32,7 @@ export const sendNotification = async (
   type: 'info' | 'success' | 'warning' | 'error' = 'info'
 ) => {
   try {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('notifications')
       .insert({
         user_id: userId,

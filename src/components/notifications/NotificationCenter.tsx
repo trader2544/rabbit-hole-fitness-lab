@@ -13,7 +13,7 @@ interface Notification {
   title: string;
   message: string;
   type: 'info' | 'success' | 'warning' | 'error';
-  read: boolean;
+  is_read: boolean;
   created_at: string;
 }
 
@@ -47,7 +47,7 @@ const NotificationCenter = () => {
     })) || [];
 
     setNotifications(typedNotifications);
-    setUnreadCount(typedNotifications.filter(n => !n.read).length);
+    setUnreadCount(typedNotifications.filter(n => !n.is_read).length);
   };
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const NotificationCenter = () => {
   const markAsRead = async (notificationId: string) => {
     const { error } = await supabase
       .from('notifications')
-      .update({ read: true })
+      .update({ is_read: true })
       .eq('id', notificationId);
 
     if (!error) {
@@ -70,9 +70,9 @@ const NotificationCenter = () => {
 
     const { error } = await supabase
       .from('notifications')
-      .update({ read: true })
+      .update({ is_read: true })
       .eq('user_id', user.id)
-      .eq('read', false);
+      .eq('is_read', false);
 
     if (!error) {
       fetchNotifications();
@@ -139,9 +139,9 @@ const NotificationCenter = () => {
                 <div
                   key={notification.id}
                   className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
-                    !notification.read ? 'bg-blue-50' : ''
+                    !notification.is_read ? 'bg-blue-50' : ''
                   }`}
-                  onClick={() => !notification.read && markAsRead(notification.id)}
+                  onClick={() => !notification.is_read && markAsRead(notification.id)}
                 >
                   <div className="flex items-start gap-3">
                     {getTypeIcon(notification.type)}
@@ -152,7 +152,7 @@ const NotificationCenter = () => {
                         {new Date(notification.created_at).toLocaleDateString()}
                       </p>
                     </div>
-                    {!notification.read && (
+                    {!notification.is_read && (
                       <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                     )}
                   </div>

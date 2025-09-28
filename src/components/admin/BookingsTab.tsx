@@ -13,54 +13,13 @@ export default function BookingsTab({ bookings, fetchBookings }) {
   console.log("BookingsTab props", bookings);
 
   const updateBookingStatus = async (bookingId: string, status: string) => {
-    const booking = Array.isArray(bookings) ? bookings.find(b => b.id === bookingId) : null;
-    const oldStatus = booking?.status;
-
-    const { error } = await supabase
-      .from('bookings')
-      .update({ status })
-      .eq('id', bookingId);
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive"
-      });
-    } else {
-      toast({
-        title: "Success",
-        description: "Booking status updated!"
-      });
-
-      // Log activity
-      if (booking) {
-        await logActivity(
-          booking.user_id,
-          'booking_status_updated',
-          `Booking status changed from ${oldStatus} to ${status}`,
-          { booking_id: bookingId, old_status: oldStatus, new_status: status }
-        );
-
-        // Send notification to user
-        const statusMessages = {
-          confirmed: 'Your booking has been confirmed!',
-          completed: 'Your session has been marked as completed.',
-          cancelled: 'Your booking has been cancelled.'
-        };
-
-        if (statusMessages[status]) {
-          await sendNotification(
-            booking.user_id,
-            'Booking Update',
-            statusMessages[status],
-            status === 'cancelled' ? 'warning' : 'success'
-          );
-        }
-      }
-
-      fetchBookings();
-    }
+    // Note: Bookings table not yet implemented
+    toast({
+      title: "Not Implemented",
+      description: "Bookings functionality is not yet implemented.",
+      variant: "destructive"
+    });
+    return;
   };
 
   if (!Array.isArray(bookings) || bookings.length === 0) {

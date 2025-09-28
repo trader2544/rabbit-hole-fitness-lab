@@ -42,11 +42,8 @@ const Admin = () => {
   };
 
   const fetchBookings = async () => {
-    const { data } = await supabase
-      .from('bookings')
-      .select(`*, profiles(full_name, email)`)
-      .order('created_at', { ascending: false });
-    if (data) setBookings(data);
+    // Note: Bookings table not yet implemented - set empty array
+    setBookings([]);
   };
 
   const fetchUsers = async () => {
@@ -66,11 +63,8 @@ const Admin = () => {
   };
 
   const fetchSubscriptions = async () => {
-    const { data } = await supabase
-      .from('subscriptions')
-      .select(`*, profiles(full_name, email)`)
-      .order('created_at', { ascending: false });
-    if (data) setSubscriptions(data);
+    // Note: Subscriptions table not yet implemented - set empty array
+    setSubscriptions([]);
   };
 
   useEffect(() => {

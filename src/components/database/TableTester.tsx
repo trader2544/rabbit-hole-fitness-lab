@@ -13,24 +13,20 @@ interface TableTest {
   count?: number;
 }
 
-// These literals match the Supabase types
+// These literals match the actual Supabase database tables
 const TABLES: { table: 
-  "profiles" | "products" | "orders" | "order_items" | "bookings" | "subscriptions" | "notifications" | "activity_logs" | "resources" | "user_roles" | "blogs" | "admin_schedules" | "schedule_bookings",
+  "profiles" | "products" | "orders" | "order_items" | "notifications" | "activity_logs" | "resources" | "resource_categories" | "trainers",
   description: string
 }[] = [
   { table: "profiles", description: "User Profiles" },
   { table: "products", description: "Products" },
   { table: "orders", description: "Orders" },
   { table: "order_items", description: "Order Items" },
-  { table: "bookings", description: "Bookings" },
-  { table: "subscriptions", description: "Subscriptions" },
   { table: "notifications", description: "Notifications" },
   { table: "activity_logs", description: "Activity Logs" },
   { table: "resources", description: "Resources" },
-  { table: "user_roles", description: "User Roles" },
-  { table: "blogs", description: "Blogs" },
-  { table: "admin_schedules", description: "Admin Schedules" },
-  { table: "schedule_bookings", description: "Schedule Bookings" },
+  { table: "resource_categories", description: "Resource Categories" },
+  { table: "trainers", description: "Trainers" },
 ];
 
 const TableTester = () => {

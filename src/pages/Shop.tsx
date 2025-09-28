@@ -29,7 +29,7 @@ const Shop = () => {
     const { data, error } = await supabase
       .from('products')
       .select('*')
-      .eq('in_stock', true)
+      .eq('is_active', true)
       .order('created_at', { ascending: false });
 
     if (data) {

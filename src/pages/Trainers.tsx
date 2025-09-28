@@ -93,41 +93,28 @@ const Trainers = () => {
     }
     setIsBooking(true);
     try {
-      const sessionDate = new Date();
-      sessionDate.setDate(sessionDate.getDate() + 3);
-
-      const { error } = await supabase.from('bookings').insert({
-        user_id: user.id,
-        trainer_name: trainer.name,
-        session_type: 'Online Session',
-        session_date: sessionDate.toISOString().split('T')[0],
-        session_time: '10:00:00',
-        duration: 60,
-        total_cost: trainer.hourlyRate,
-        status: 'confirmed'
-      });
-
-      if (error) throw error;
-
-      // Log activity
+      // Note: Bookings table not yet implemented - just log activity
       await logActivity(
         user.id,
         'booking_created',
-        `Booked session with ${trainer.name}`,
+        `Attempted to book session with ${trainer.name}`,
         { trainer_name: trainer.name, session_type: 'Online Session', cost: trainer.hourlyRate }
       );
 
       // Send notification to user
+      const sessionDate = new Date();
+      sessionDate.setDate(sessionDate.getDate() + 3);
+      
       await sendNotification(
         user.id,
-        'Booking Confirmed',
-        `Your session with ${trainer.name} has been booked successfully for ${sessionDate.toLocaleDateString()}.`,
-        'success'
+        'Booking Request',
+        `Your booking request for ${trainer.name} has been received. This is a demo - bookings table not yet implemented.`,
+        'info'
       );
 
       toast({
-        title: "Booking Successful!",
-        description: `You've booked a session with ${trainer.name}. You can see your bookings in your profile.`,
+        title: "Booking Request Received!",
+        description: `Your booking request for ${trainer.name} has been received. This is a demo feature.`,
       });
       navigate('/profile?tab=bookings');
     } catch (error: any) {

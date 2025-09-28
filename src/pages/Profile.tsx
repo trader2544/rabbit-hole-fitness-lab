@@ -70,29 +70,15 @@ const Profile = () => {
   const fetchBookings = async () => {
     if (!user) return;
     
-    const { data, error } = await supabase
-      .from('bookings')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-
-    if (data) {
-      setBookings(data);
-    }
+    // Note: Bookings table not yet implemented - set empty array
+    setBookings([]);
   };
 
   const fetchSubscriptions = async () => {
     if (!user) return;
     
-    const { data, error } = await supabase
-      .from('subscriptions')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-
-    if (data) {
-      setSubscriptions(data);
-    }
+    // Note: Subscriptions table not yet implemented - set empty array
+    setSubscriptions([]);
   };
 
   const updateProfile = async (e: React.FormEvent) => {

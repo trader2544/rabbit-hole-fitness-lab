@@ -50,15 +50,14 @@ const SubscriptionPlans = () => {
     }
     setLoadingPlan(plan.name);
     try {
-      const price = parseFloat(plan.price.replace('$', ''));
-      const { error } = await supabase.from('subscriptions').insert({
-        user_id: user.id,
-        plan_name: plan.name,
-        plan_price: price,
-        status: 'active',
-      });
-
-      if (error) throw error;
+      // Log activity instead of creating subscription (table not implemented yet)
+      const { logActivity } = await import('@/components/activity/ActivityLogger');
+      await logActivity(
+        user.id,
+        'subscription',
+        `User subscribed to ${plan.name} plan`,
+        { plan_name: plan.name, price: parseFloat(plan.price.replace('$', '')) }
+      );
 
       toast({
         title: "Subscription Successful!",

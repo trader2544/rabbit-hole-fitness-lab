@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Edit2, Trash2, Save, X } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Plus, Edit2, Trash2, Save, X, Upload } from "lucide-react";
 
 interface Trainer {
   id: string;
@@ -16,50 +17,47 @@ interface Trainer {
   location: string;
   rating: number;
   reviews: number;
-  hourlyRate: number;
+  hourly_rate: number;
   experience: string;
-  image: string;
+  image_url: string;
   description: string;
   certifications: string[];
   availability: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 const TrainersManagement = () => {
-  const [trainers, setTrainers] = useState<Trainer[]>([
-    {
-      id: "1",
-      name: "Patrick Kamande",
-      specialty: "Calisthenics & Strength Training",
-      location: "Nairobi",
-      rating: 4.9,
-      reviews: 127,
-      hourlyRate: 25,
-      experience: "5+ years",
-      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80",
-      description: "Specialized in calisthenics and functional movement patterns",
-      certifications: ["NASM-CPT", "Calisthenics Level 3"],
-      availability: "Mon-Fri 6AM-8PM"
-    },
-    {
-      id: "2", 
-      name: "Dennis Kabiru",
-      specialty: "Powerlifting & Muscle Building",
-      location: "Kiambu",
-      rating: 4.8,
-      reviews: 89,
-      hourlyRate: 30,
-      experience: "7+ years",
-      image: "https://images.unsplash.com/photo-1594381898411-846e7d193883?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80",
-      description: "National powerlifting champion with expertise in strength building",
-      certifications: ["CSCS", "Powerlifting Coach"],
-      availability: "Tue-Sat 7AM-6PM"
-    }
-  ]);
-  
+  const [trainers, setTrainers] = useState<Trainer[]>([]);
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [editForm, setEditForm] = useState<Partial<Trainer>>({});
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetchTrainers();
+  }, []);
+
+  const fetchTrainers = async () => {
+    const { data, error } = await supabase
+      .from('trainers')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      setTrainers(data || []);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setImageFile(e.target.files[0]);
+    }
+  };
 
   const handleEdit = (trainer: Trainer) => {
     setIsEditing(trainer.id);
@@ -67,55 +65,139 @@ const TrainersManagement = () => {
       ...trainer,
       certifications: trainer.certifications
     });
+    setImageFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const handleSave = () => {
-    if (isAdding) {
-      const newTrainer: Trainer = {
-        id: Date.now().toString(),
-        name: editForm.name || "",
-        specialty: editForm.specialty || "",
-        location: editForm.location || "",
-        rating: editForm.rating || 4.5,
-        reviews: editForm.reviews || 0,
-        hourlyRate: editForm.hourlyRate || 25,
-        experience: editForm.experience || "",
-        image: editForm.image || "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80",
-        description: editForm.description || "",
-        certifications: editForm.certifications || [],
-        availability: editForm.availability || ""
-      };
-      setTrainers([...trainers, newTrainer]);
-      setIsAdding(false);
-      toast({
-        title: "Success",
-        description: "Trainer added successfully",
-      });
-    } else if (isEditing) {
-      setTrainers(trainers.map(t => 
-        t.id === isEditing ? { ...t, ...editForm } as Trainer : t
-      ));
-      setIsEditing(null);
-      toast({
-        title: "Success",
-        description: "Trainer updated successfully",
-      });
+  const handleSave = async () => {
+    if (!editForm.name || !editForm.specialty || !editForm.location || !editForm.experience) {
+      toast({ title: "Error", description: "Please fill in all required fields.", variant: "destructive" });
+      return;
     }
+
+    let imageUrl = editForm.image_url || "";
+
+    // Upload image if file is selected
+    if (imageFile) {
+      const fileExt = imageFile.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `public/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('trainer-images')
+        .upload(filePath, imageFile);
+
+      if (uploadError) {
+        toast({ title: "Image Upload Error", description: uploadError.message, variant: "destructive" });
+        return;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('trainer-images')
+        .getPublicUrl(filePath);
+      
+      imageUrl = publicUrl;
+    }
+
+    if (isAdding) {
+      const { error: insertError } = await supabase
+        .from('trainers')
+        .insert([{
+          name: editForm.name,
+          specialty: editForm.specialty,
+          location: editForm.location,
+          rating: editForm.rating || 4.5,
+          reviews: editForm.reviews || 0,
+          hourly_rate: editForm.hourly_rate || 25,
+          experience: editForm.experience,
+          image_url: imageUrl,
+          description: editForm.description || "",
+          certifications: editForm.certifications || [],
+          availability: editForm.availability || "Available"
+        }]);
+
+      if (insertError) {
+        toast({ title: "Error", description: insertError.message, variant: "destructive" });
+        return;
+      }
+
+      toast({ title: "Success", description: "Trainer added successfully!" });
+      setIsAdding(false);
+    } else if (isEditing) {
+      const updateData: any = {
+        name: editForm.name,
+        specialty: editForm.specialty,
+        location: editForm.location,
+        rating: editForm.rating,
+        reviews: editForm.reviews,
+        hourly_rate: editForm.hourly_rate,
+        experience: editForm.experience,
+        description: editForm.description,
+        certifications: editForm.certifications,
+        availability: editForm.availability
+      };
+
+      if (imageUrl) {
+        updateData.image_url = imageUrl;
+      }
+
+      const { error: updateError } = await supabase
+        .from('trainers')
+        .update(updateData)
+        .eq('id', isEditing);
+
+      if (updateError) {
+        toast({ title: "Error", description: updateError.message, variant: "destructive" });
+        return;
+      }
+
+      toast({ title: "Success", description: "Trainer updated successfully!" });
+      setIsEditing(null);
+    }
+
     setEditForm({});
+    setImageFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    fetchTrainers();
   };
 
   const handleCancel = () => {
     setIsEditing(null);
     setIsAdding(false);
     setEditForm({});
+    setImageFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const handleDelete = (trainerId: string) => {
-    setTrainers(trainers.filter(t => t.id !== trainerId));
-    toast({
-      title: "Success",
-      description: "Trainer deleted successfully",
-    });
+  const handleDelete = async (trainer: Trainer) => {
+    if (!confirm("Are you sure you want to delete this trainer? This action cannot be undone.")) {
+      return;
+    }
+
+    // Delete image from storage if exists
+    if (trainer.image_url) {
+      try {
+        const url = new URL(trainer.image_url);
+        const path = url.pathname.split('/trainer-images/')[1];
+        if (path) {
+          await supabase.storage.from('trainer-images').remove([path]);
+        }
+      } catch (e) {
+        console.error("Error parsing or deleting image from storage", e);
+      }
+    }
+
+    const { error } = await supabase
+      .from('trainers')
+      .delete()
+      .eq('id', trainer.id);
+
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Success", description: "Trainer deleted successfully!" });
+      fetchTrainers();
+    }
   };
 
   const handleAddNew = () => {
@@ -126,13 +208,15 @@ const TrainersManagement = () => {
       location: "",
       rating: 4.5,
       reviews: 0,
-      hourlyRate: 25,
+      hourly_rate: 25,
       experience: "",
-      image: "",
+      image_url: "",
       description: "",
       certifications: [],
-      availability: ""
+      availability: "Available"
     });
+    setImageFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const isFormDisabled = Boolean(isAdding || isEditing);
@@ -191,8 +275,8 @@ const TrainersManagement = () => {
                 <Input
                   id="hourlyRate"
                   type="number"
-                  value={editForm.hourlyRate || ""}
-                  onChange={(e) => setEditForm({...editForm, hourlyRate: parseInt(e.target.value)})}
+                  value={editForm.hourly_rate || ""}
+                  onChange={(e) => setEditForm({...editForm, hourly_rate: parseInt(e.target.value)})}
                 />
               </div>
               <div>
@@ -210,12 +294,24 @@ const TrainersManagement = () => {
             </div>
             
             <div>
-              <Label htmlFor="image">Image URL</Label>
-              <Input
-                id="image"
-                value={editForm.image || ""}
-                onChange={(e) => setEditForm({...editForm, image: e.target.value})}
-              />
+              <Label htmlFor="image">Trainer Image</Label>
+              <div className="flex items-center space-x-2">
+                <Input
+                  id="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  ref={fileInputRef}
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+                />
+              </div>
+              {imageFile && <p className="text-sm text-gray-500 mt-2">Selected: {imageFile.name}</p>}
+              {editForm.image_url && !imageFile && (
+                <div className="mt-2">
+                  <img src={editForm.image_url} alt="Current trainer" className="w-16 h-16 object-cover rounded" />
+                  <p className="text-sm text-gray-500">Current image</p>
+                </div>
+              )}
             </div>
             
             <div>
@@ -256,7 +352,7 @@ const TrainersManagement = () => {
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
                 <img 
-                  src={trainer.image} 
+                  src={trainer.image_url || "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"} 
                   alt={trainer.name}
                   className="w-16 h-16 object-cover rounded"
                 />
@@ -266,9 +362,10 @@ const TrainersManagement = () => {
                       <h3 className="font-semibold text-lg">{trainer.name}</h3>
                       <p className="text-gray-600">{trainer.specialty}</p>
                       <p className="text-sm text-gray-500">
-                        {trainer.location} • {trainer.experience} • ${trainer.hourlyRate}/hr
+                        {trainer.location} • {trainer.experience} • ${trainer.hourly_rate}/hr
                       </p>
                       <p className="text-sm text-gray-500 mt-1">{trainer.description}</p>
+                      <p className="text-sm text-gray-500">Rating: {trainer.rating} ({trainer.reviews} reviews)</p>
                     </div>
                     <div className="flex gap-2">
                       <Button
@@ -282,7 +379,7 @@ const TrainersManagement = () => {
                       <Button
                         variant="destructive"
                         size="sm"
-                        onClick={() => handleDelete(trainer.id)}
+                        onClick={() => handleDelete(trainer)}
                         disabled={isFormDisabled}
                       >
                         <Trash2 className="h-4 w-4" />

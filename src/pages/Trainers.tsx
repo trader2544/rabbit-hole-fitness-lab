@@ -10,81 +10,42 @@ import { supabase } from "@/integrations/supabase/client";
 import { logActivity, sendNotification } from "@/components/activity/ActivityLogger";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const trainers = [
-  {
-    id: 1,
-    name: "Marcus Thompson",
-    specialty: "Strength & Conditioning",
-    location: "New York, NY",
-    rating: 4.9,
-    reviews: 127,
-    hourlyRate: 85,
-    experience: "8 years",
-    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    description: "Former collegiate athlete specializing in Olympic lifts and athletic performance.",
-    certifications: ["CSCS", "USAW", "FMS"],
-    availability: "Mon-Fri 6AM-8PM"
-  },
-  {
-    id: 2,
-    name: "Sarah Chen",
-    specialty: "Calisthenics & Flexibility",
-    location: "Los Angeles, CA",
-    rating: 4.8,
-    reviews: 89,
-    hourlyRate: 75,
-    experience: "6 years",
-    image: "https://images.unsplash.com/photo-1594737625785-a6cbdabd333c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    description: "Yoga instructor turned calisthenics coach with expertise in bodyweight progressions.",
-    certifications: ["RYT-500", "PCC", "MovNat"],
-    availability: "Tue-Sat 7AM-6PM"
-  },
-  {
-    id: 3,
-    name: "David Rodriguez",
-    specialty: "Nutrition & Body Composition",
-    location: "Austin, TX",
-    rating: 4.9,
-    reviews: 156,
-    hourlyRate: 95,
-    experience: "10 years",
-    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    description: "Registered dietitian and certified trainer specializing in physique transformation.",
-    certifications: ["RD", "NASM-CPT", "PN1"],
-    availability: "Mon-Sun 5AM-9PM"
-  },
-  {
-    id: 4,
-    name: "Emma Wilson",
-    specialty: "Rehabilitation & Mobility",
-    location: "Seattle, WA",
-    rating: 4.7,
-    reviews: 73,
-    hourlyRate: 90,
-    experience: "7 years",
-    image: "https://images.unsplash.com/photo-1594737625785-a6cbdabd333c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    description: "Physical therapist and movement specialist focusing on injury prevention.",
-    certifications: ["DPT", "SFMA", "Graston"],
-    availability: "Mon-Fri 8AM-5PM"
-  }
-];
-
 const Trainers = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [trainers, setTrainers] = useState([]);
   const [selectedTrainer, setSelectedTrainer] = useState(null);
   const { user } = useAuth();
   const { toast } = useToast();
   const [isBooking, setIsBooking] = useState(false);
   const isMobile = useIsMobile();
 
+  const fetchTrainers = async () => {
+    const { data, error } = await supabase
+      .from('trainers')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching trainers:', error);
+      // Fallback to empty array if there's an error
+      setTrainers([]);
+    } else {
+      setTrainers(data || []);
+    }
+  };
+
+  useEffect(() => {
+    fetchTrainers();
+  }, []);
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (id) {
-      const trainer = trainers.find(t => t.id === parseInt(id));
+    if (id && trainers.length > 0) {
+      const trainer = trainers.find(t => t.id === id);
       setSelectedTrainer(trainer);
     }
-  }, [id]);
+  }, [id, trainers]);
 
   const handleBookSession = async (trainer: any) => {
     if (!user) {
@@ -93,28 +54,45 @@ const Trainers = () => {
     }
     setIsBooking(true);
     try {
-      // Note: Bookings table not yet implemented - just log activity
+      // Create a real booking in the database
+      const sessionDate = new Date();
+      sessionDate.setDate(sessionDate.getDate() + 3); // 3 days from now
+      
+      const { error: bookingError } = await supabase
+        .from('bookings')
+        .insert({
+          user_id: user.id,
+          trainer_id: trainer.id,
+          session_date: sessionDate.toISOString(),
+          session_type: 'Online Session',
+          duration: 60,
+          total_cost: trainer.hourly_rate,
+          status: 'pending'
+        });
+
+      if (bookingError) {
+        throw bookingError;
+      }
+
+      // Log activity
       await logActivity(
         user.id,
         'booking_created',
-        `Attempted to book session with ${trainer.name}`,
-        { trainer_name: trainer.name, session_type: 'Online Session', cost: trainer.hourlyRate }
+        `Booked session with ${trainer.name}`,
+        { trainer_name: trainer.name, session_type: 'Online Session', cost: trainer.hourly_rate }
       );
 
       // Send notification to user
-      const sessionDate = new Date();
-      sessionDate.setDate(sessionDate.getDate() + 3);
-      
       await sendNotification(
         user.id,
-        'Booking Request',
-        `Your booking request for ${trainer.name} has been received. This is a demo - bookings table not yet implemented.`,
-        'info'
+        'Booking Confirmed',
+        `Your booking with ${trainer.name} has been confirmed for ${sessionDate.toLocaleDateString()}.`,
+        'success'
       );
 
       toast({
-        title: "Booking Request Received!",
-        description: `Your booking request for ${trainer.name} has been received. This is a demo feature.`,
+        title: "Booking Confirmed!",
+        description: `Your session with ${trainer.name} has been booked for ${sessionDate.toLocaleDateString()}.`,
       });
       navigate('/profile?tab=bookings');
     } catch (error: any) {
@@ -145,11 +123,11 @@ const Trainers = () => {
               
               <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'lg:grid-cols-2 gap-12'}`}>
                 <div>
-                  <img 
-                    src={selectedTrainer.image} 
-                    alt={selectedTrainer.name}
-                    className={`w-full ${isMobile ? 'aspect-[4/3]' : 'aspect-[4/3]'} object-cover ${isMobile ? 'mb-3' : 'mb-6'}`}
-                  />
+                <img 
+                  src={selectedTrainer.image_url || "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"} 
+                  alt={selectedTrainer.name}
+                  className={`w-full ${isMobile ? 'aspect-[4/3]' : 'aspect-[4/3]'} object-cover ${isMobile ? 'mb-3' : 'mb-6'}`}
+                />
                   
                   <div className={`space-y-${isMobile ? '2' : '4'}`}>
                     <div className={`flex items-center ${isMobile ? 'space-x-2' : 'space-x-4'}`}>
@@ -179,7 +157,7 @@ const Trainers = () => {
                   
                   <div className={`bg-gray-50 ${isMobile ? 'p-3' : 'p-6'} ${isMobile ? 'mb-3' : 'mb-6'}`}>
                     <div className={`flex items-center justify-between ${isMobile ? 'mb-2' : 'mb-4'}`}>
-                      <span className={`${isMobile ? 'text-lg' : 'text-2xl'} font-semibold`}>${selectedTrainer.hourlyRate}/hour</span>
+                      <span className={`${isMobile ? 'text-lg' : 'text-2xl'} font-semibold`}>${selectedTrainer.hourly_rate}/hour</span>
                       <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>Starting rate</span>
                     </div>
                     
@@ -190,7 +168,7 @@ const Trainers = () => {
                         className={`w-full bg-black text-white hover:bg-gray-800 rounded-none ${isMobile ? 'py-2 text-sm' : 'py-3'}`}
                       >
                         <Calendar className={`mr-2 ${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
-                        {isBooking ? 'Booking...' : 'Book Session (mock)'}
+                        {isBooking ? 'Booking...' : 'Book Session'}
                       </Button>
                       <Button variant="outline" className={`w-full border-gray-200 text-gray-700 hover:bg-gray-50 rounded-none ${isMobile ? 'py-2 text-sm' : 'py-3'}`}>
                         <MessageSquare className={`mr-2 ${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
@@ -208,7 +186,7 @@ const Trainers = () => {
                     <div>
                       <h3 className={`font-semibold ${isMobile ? 'mb-2 text-sm' : 'mb-3'}`}>Certifications</h3>
                       <div className="flex flex-wrap gap-2">
-                        {selectedTrainer.certifications.map((cert, index) => (
+                        {(selectedTrainer.certifications || []).map((cert, index) => (
                           <Badge key={index} variant="outline" className={`rounded-none ${isMobile ? 'text-xs' : ''}`}>{cert}</Badge>
                         ))}
                       </div>
@@ -261,51 +239,57 @@ const Trainers = () => {
             </div>
 
             <div className={`grid grid-cols-1 ${isMobile ? 'gap-3' : 'md:grid-cols-2 gap-6'}`}>
-              {trainers.map((trainer) => (
-                <Card key={trainer.id} className="border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/trainers/book/${trainer.id}`)}>
-                  <div className={`grid ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2'}`}>
-                    <div className={`${isMobile ? 'aspect-[4/3]' : 'aspect-[4/3] md:aspect-auto'} overflow-hidden`}>
-                      <img 
-                        src={trainer.image} 
-                        alt={trainer.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    
-                    <div className={`${isMobile ? 'p-3' : 'p-6'}`}>
-                      <div className={`flex items-center justify-between ${isMobile ? 'mb-2' : 'mb-3'}`}>
-                        <h3 className={`font-semibold ${isMobile ? 'text-base' : 'text-lg'}`}>{trainer.name}</h3>
-                        <div className="flex items-center">
-                          <Star className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-yellow-500 fill-current mr-1`} />
-                          <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium`}>{trainer.rating}</span>
-                        </div>
+              {trainers.length === 0 ? (
+                <div className="col-span-full text-center py-12">
+                  <p className="text-gray-500">No trainers available at the moment.</p>
+                </div>
+              ) : (
+                trainers.map((trainer) => (
+                  <Card key={trainer.id} className="border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/trainers/book/${trainer.id}`)}>
+                    <div className={`grid ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2'}`}>
+                      <div className={`${isMobile ? 'aspect-[4/3]' : 'aspect-[4/3] md:aspect-auto'} overflow-hidden`}>
+                        <img 
+                          src={trainer.image_url || "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"} 
+                          alt={trainer.name}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                       
-                      <p className={`text-gray-600 ${isMobile ? 'mb-2 text-sm' : 'mb-3'}`}>{trainer.specialty}</p>
-                      
-                      <div className={`space-y-${isMobile ? '1' : '2'} ${isMobile ? 'mb-3' : 'mb-4'}`}>
-                        <div className={`flex items-center ${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>
-                          <MapPin className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3'} mr-2`} />
-                          {trainer.location}
+                      <div className={`${isMobile ? 'p-3' : 'p-6'}`}>
+                        <div className={`flex items-center justify-between ${isMobile ? 'mb-2' : 'mb-3'}`}>
+                          <h3 className={`font-semibold ${isMobile ? 'text-base' : 'text-lg'}`}>{trainer.name}</h3>
+                          <div className="flex items-center">
+                            <Star className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-yellow-500 fill-current mr-1`} />
+                            <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium`}>{trainer.rating}</span>
+                          </div>
                         </div>
-                        <div className={`flex items-center ${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>
-                          <DollarSign className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3'} mr-2`} />
-                          ${trainer.hourlyRate}/hour
+                        
+                        <p className={`text-gray-600 ${isMobile ? 'mb-2 text-sm' : 'mb-3'}`}>{trainer.specialty}</p>
+                        
+                        <div className={`space-y-${isMobile ? '1' : '2'} ${isMobile ? 'mb-3' : 'mb-4'}`}>
+                          <div className={`flex items-center ${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>
+                            <MapPin className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3'} mr-2`} />
+                            {trainer.location}
+                          </div>
+                          <div className={`flex items-center ${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>
+                            <DollarSign className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3'} mr-2`} />
+                            ${trainer.hourly_rate}/hour
+                          </div>
+                          <div className={`flex items-center ${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>
+                            <Users className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3'} mr-2`} />
+                            {trainer.reviews} reviews
+                          </div>
                         </div>
-                        <div className={`flex items-center ${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>
-                          <Users className={`${isMobile ? 'h-3 w-3' : 'h-3 w-3'} mr-2`} />
-                          {trainer.reviews} reviews
-                        </div>
+                        
+                        <Button className={`w-full bg-black text-white hover:bg-gray-800 rounded-none ${isMobile ? 'text-xs h-8' : 'text-sm'}`}>
+                          View Profile
+                          <ArrowRight className={`ml-2 ${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
+                        </Button>
                       </div>
-                      
-                      <Button className={`w-full bg-black text-white hover:bg-gray-800 rounded-none ${isMobile ? 'text-xs h-8' : 'text-sm'}`}>
-                        View Profile
-                        <ArrowRight className={`ml-2 ${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
-                      </Button>
                     </div>
-                  </div>
-                </Card>
-              ))}
+                  </Card>
+                ))
+              )}
             </div>
           </div>
         </div>

@@ -16,13 +16,17 @@ export default function SubscriptionsTab({ subscriptions, fetchSubscriptions }) 
   const { toast } = useToast();
 
   const updateSubscriptionStatus = async (subscriptionId: string, status: string) => {
-    // Note: Subscriptions table not yet implemented
-    toast({
-      title: "Not Implemented",
-      description: "Subscriptions functionality is not yet implemented.",
-      variant: "destructive"
-    });
-    return;
+    const { error } = await supabase
+      .from('subscriptions')
+      .update({ status })
+      .eq('id', subscriptionId);
+
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Success", description: "Subscription status updated successfully!" });
+      fetchSubscriptions();
+    }
   };
   
   const getStatusVariant = (status) => {
@@ -56,7 +60,7 @@ export default function SubscriptionsTab({ subscriptions, fetchSubscriptions }) 
             <TableCell>{sub.profiles?.full_name || "N/A"}</TableCell>
             <TableCell>{sub.profiles?.email}</TableCell>
             <TableCell>{sub.plan_name}</TableCell>
-            <TableCell>${sub.plan_price}</TableCell>
+            <TableCell>${sub.price}</TableCell>
             <TableCell>
               <Badge variant={getStatusVariant(sub.status)} className="capitalize">{sub.status}</Badge>
             </TableCell>

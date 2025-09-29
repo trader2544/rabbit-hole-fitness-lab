@@ -13,13 +13,17 @@ export default function BookingsTab({ bookings, fetchBookings }) {
   console.log("BookingsTab props", bookings);
 
   const updateBookingStatus = async (bookingId: string, status: string) => {
-    // Note: Bookings table not yet implemented
-    toast({
-      title: "Not Implemented",
-      description: "Bookings functionality is not yet implemented.",
-      variant: "destructive"
-    });
-    return;
+    const { error } = await supabase
+      .from('bookings')
+      .update({ status })
+      .eq('id', bookingId);
+
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Success", description: "Booking status updated successfully!" });
+      fetchBookings();
+    }
   };
 
   if (!Array.isArray(bookings) || bookings.length === 0) {
@@ -45,10 +49,10 @@ export default function BookingsTab({ bookings, fetchBookings }) {
           <CardContent className="p-6">
             <div className="flex justify-between items-start">
               <div>
-                <p className="font-semibold">{booking.trainer_name || "?"} - {booking.session_type || "?"}</p>
-                <p className="text-sm text-gray-600">{booking.profiles?.full_name || "?"} ({booking.profiles?.email || "?"})</p>
+                <p className="font-semibold">{booking.trainers?.name || "Unknown Trainer"} - {booking.session_type || "Online Session"}</p>
+                <p className="text-sm text-gray-600">{booking.profiles?.full_name || "Unknown User"} ({booking.profiles?.email || "No email"})</p>
                 <p className="text-sm text-gray-600">
-                  {booking.session_date ? new Date(booking.session_date).toLocaleDateString() : "?"} at {booking.session_time || "?"}
+                  {booking.session_date ? new Date(booking.session_date).toLocaleDateString() : "No date"} - {booking.duration || 60} minutes
                 </p>
               </div>
               <div className="text-right">

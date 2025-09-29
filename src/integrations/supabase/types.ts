@@ -41,6 +41,48 @@ export type Database = {
         }
         Relationships: []
       }
+      bookings: {
+        Row: {
+          created_at: string
+          duration: number
+          id: string
+          notes: string | null
+          session_date: string
+          session_type: string
+          status: string
+          total_cost: number
+          trainer_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          duration?: number
+          id?: string
+          notes?: string | null
+          session_date: string
+          session_type?: string
+          status?: string
+          total_cost: number
+          trainer_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          duration?: number
+          id?: string
+          notes?: string | null
+          session_date?: string
+          session_type?: string
+          status?: string
+          total_cost?: number
+          trainer_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string | null
@@ -291,6 +333,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      subscriptions: {
+        Row: {
+          auto_renew: boolean
+          created_at: string
+          end_date: string | null
+          id: string
+          plan_name: string
+          plan_type: string
+          price: number
+          start_date: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auto_renew?: boolean
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          plan_name: string
+          plan_type?: string
+          price: number
+          start_date?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auto_renew?: boolean
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          plan_name?: string
+          plan_type?: string
+          price?: number
+          start_date?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       trainers: {
         Row: {
